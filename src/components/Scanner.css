@@ -1,0 +1,43 @@
+.card{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.card h2{
+
+    margin-top:0;
+
+    color:#0F3D66;
+
+}
+
+.card input{
+
+    width:100%;
+
+    padding:15px;
+
+    font-size:22px;
+
+    border-radius:10px;
+
+    border:2px solid #D9E2EC;
+
+    box-sizing:border-box;
+
+}
+
+.card input:focus{
+
+    outline:none;
+
+    border-color:#0F3D66;
+
+}

@@ -1,0 +1,25 @@
+.info{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.campo{
+    background:#F7F9FC;
+    border-radius:12px;
+    padding:15px;
+    border-left:5px solid #0F4C81;
+}
+
+.campo label{
+    display:block;
+    color:#666;
+    font-size:13px;
+    margin-bottom:8px;
+}
+
+.campo span{
+    font-size:22px;
+    font-weight:bold;
+    color:#222;
+}

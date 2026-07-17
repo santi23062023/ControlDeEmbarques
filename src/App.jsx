@@ -1,57 +1,90 @@
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+
 import Header from "./components/Header";
 import Scanner from "./components/Scanner";
+import UltimoEscaneo from "./components/UltimoEscaneo";
+
+import { leerMarbete } from "./utils/marbete";
+import { buscarEquivalencia } from "./services/equivalencias";
+import { buscarProducto } from "./services/base";
 
 function App() {
+
+  const [marbete, setMarbete] = useState("");
+
+  const [ultimoEscaneo, setUltimoEscaneo] = useState({
+    codigoOriginal: "",
+    codigoSAP: "",
+    nombre: "",
+    peso: ""
+  });
+
+  const [escaneos, setEscaneos] = useState([]);
+
+  // Leer el marbete mientras se escribe
+  const { codigoOriginal, peso } = leerMarbete(marbete);
+
+  // Buscar equivalencia
+  const codigoSAP = buscarEquivalencia(codigoOriginal);
+
+  // Buscar nombre del producto
+  const nombreProducto = buscarProducto(codigoSAP);
+  function agregarEscaneo() {
+
+  if (!codigoSAP) return;
+
+  const nuevo = {
+    codigo: codigoSAP,
+    nombre: nombreProducto,
+    peso: Number(peso)
+  };
+
+  setEscaneos([...escaneos, nuevo]);
+
+  setUltimoEscaneo({
+    codigoOriginal,
+    codigoSAP,
+    nombre: nombreProducto,
+    peso
+  });
+
+  setMarbete("");
+
+}
 
   return (
 
     <div className="app">
-<Header />
-   
+
+      <Header />
+
       <main className="principal">
-<Scanner />
 
-        <section className="card">
+   <Scanner
+  marbete={marbete}
+  setMarbete={setMarbete}
+  agregarEscaneo={agregarEscaneo}
+/>
 
-          <h2>📋 Último Escaneo</h2>
-
-          <p><strong>Código:</strong></p>
-
-          <p>---------</p>
-
-          <p><strong>Código SAP:</strong></p>
-
-          <p>---------</p>
-
-          <p><strong>Nombre:</strong></p>
-
-          <p>---------</p>
-
-          <p><strong>Peso:</strong></p>
-
-          <p>0.00 Kg</p>
-
-        </section>
-
+  <UltimoEscaneo
+  codigoOriginal={codigoOriginal}
+  codigoSAP={codigoSAP}
+  nombreProducto={nombreProducto}
+  peso={peso}
+/>
       </main>
 
       <section className="resumen">
 
         <div className="dato">
-
           <h3>📦 PIEZAS</h3>
-
           <span>0</span>
-
         </div>
 
         <div className="dato">
-
           <h3>⚖ TOTAL KG</h3>
-
           <span>0.00</span>
-
         </div>
 
       </section>
@@ -63,17 +96,11 @@ function App() {
         <table>
 
           <thead>
-
             <tr>
-
               <th>Código</th>
-
               <th>Nombre</th>
-
               <th>Peso</th>
-
             </tr>
-
           </thead>
 
           <tbody>
@@ -86,8 +113,8 @@ function App() {
 
     </div>
 
-  )
+  );
 
 }
 
-export default App
+export default App;

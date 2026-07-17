@@ -1,0 +1,101 @@
+.header{
+
+    background:#0F3D66;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px 35px;
+
+    border-radius:15px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}
+
+.header h1{
+
+    margin:0;
+
+    font-size:32px;
+
+}
+
+.header p{
+
+    margin-top:6px;
+
+    opacity:.85;
+
+}
+
+.header-status{
+
+    text-align:right;
+
+}
+
+.status{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    font-weight:bold;
+
+}
+
+.status-dot{
+
+    width:12px;
+
+    height:12px;
+
+    background:#33cc66;
+
+    border-radius:50%;
+
+}.header-info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.logo{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:15px;
+
+    background:white;
+
+    color:#0F3D66;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:28px;
+
+    font-weight:bold;
+
+}

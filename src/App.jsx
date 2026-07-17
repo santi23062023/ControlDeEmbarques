@@ -1,137 +1,93 @@
-import { useState } from 'react'
 import './App.css'
-import { leerMarbete } from './utils/marbete'
-import { buscarEquivalencia } from './services/equivalencias'
-import { buscarProducto } from './services/base'
+import Header from "./components/Header";
+import Scanner from "./components/Scanner";
 
 function App() {
 
-  const [marbete, setMarbete] = useState("");
-  const [escaneos, setEscaneos] = useState([]);
-const { codigoOriginal, peso } = leerMarbete(marbete);
-const codigoSAP = buscarEquivalencia(codigoOriginal);
-const nombreProducto = buscarProducto(codigoSAP);
-const totalKg = escaneos.reduce((total, item) => {
-  return total + item.peso;
-}, 0);
-function agregarEscaneo() {
-  const nombreProducto = buscarProducto(codigoSAP);
-
-  if (!codigoSAP) return;
-
-  const nuevo = {
-    codigo: codigoSAP,
-    nombre: nombreProducto,
-    peso: Number(peso)
-  };
-
-  setEscaneos([...escaneos, nuevo]);
-
-}
-
   return (
-    <div className="contenedor">
 
-      <h1>CONTROL DE EMBARQUES</h1>
+    <div className="app">
+<Header />
+   
+      <main className="principal">
+<Scanner />
 
-      <h3>Versión 1.0.0</h3>
+        <section className="card">
 
-      <hr />
+          <h2>📋 Último Escaneo</h2>
 
-      <h2>Escanee un marbete</h2>
+          <p><strong>Código:</strong></p>
 
-      <input
-        type="text"
-        placeholder="Escanee aquí..."
-        value={marbete}
-        onChange={(e) => setMarbete(e.target.value)}
-        onKeyDown={(e) => {
+          <p>---------</p>
 
-  if (e.key === "Enter") {
+          <p><strong>Código SAP:</strong></p>
 
-    agregarEscaneo();
+          <p>---------</p>
 
-    setMarbete("");
+          <p><strong>Nombre:</strong></p>
 
-  }
+          <p>---------</p>
 
-}}
-      />
+          <p><strong>Peso:</strong></p>
 
-      <hr />
+          <p>0.00 Kg</p>
 
-      <h2>Último escaneo</h2>
+        </section>
 
-      <p><strong>Marbete:</strong></p>
+      </main>
 
-      <p>{marbete}</p>
+      <section className="resumen">
 
-      <hr />
+        <div className="dato">
 
-   <h2>Código:</h2>
+          <h3>📦 PIEZAS</h3>
 
-<p>{codigoOriginal}</p>
+          <span>0</span>
 
-<h2>Código SAP:</h2>
+        </div>
 
-<p>{codigoSAP}</p>
+        <div className="dato">
 
-<h2>Nombre:</h2>
+          <h3>⚖ TOTAL KG</h3>
 
-<p>{nombreProducto}</p>
-<h2>Peso:</h2>
+          <span>0.00</span>
 
-<p>{peso}</p>
+        </div>
 
-      <hr />
-<h2>Resumen</h2>
+      </section>
 
-<p><strong>Piezas:</strong> {escaneos.length}</p>
+      <section className="card">
 
-<p><strong>Total Kg:</strong> {totalKg.toFixed(2)}</p>
+        <h2>📄 Escaneos Realizados</h2>
 
-<hr />
+        <table>
 
-<h2>Escaneos</h2>
+          <thead>
 
-<table border="1" cellPadding="5">
+            <tr>
 
-  <thead>
+              <th>Código</th>
 
-    <tr>
+              <th>Nombre</th>
 
-      <th>Código</th>
+              <th>Peso</th>
 
-      <th>Nombre</th>
+            </tr>
 
-      <th>Peso</th>
+          </thead>
 
-    </tr>
+          <tbody>
 
-  </thead>
+          </tbody>
 
-  <tbody>
+        </table>
 
-    {escaneos.map((item, index) => (
+      </section>
 
-      <tr key={index}>
+    </div>
 
-        <td>{item.codigo}</td>
-
-        <td>{item.nombre}</td>
-
-        <td>{item.peso}</td>
-
-      </tr>
-
-    ))}
-
-  </tbody>
-
-</table>
-
-</div>
   )
+
 }
 
 export default App

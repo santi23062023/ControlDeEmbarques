@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 
 import Header from "./components/Header";
@@ -8,6 +8,12 @@ import UltimoEscaneo from "./components/UltimoEscaneo";
 import { leerMarbete } from "./utils/marbete";
 import { buscarEquivalencia } from "./services/equivalencias";
 import { buscarProducto } from "./services/base";
+
+import TablaEscaneos from "./components/TablaEscaneos";
+import Resumen from "./components/Resumen";
+
+import ModalConfirmacion from "./components/ModalConfirmacion";
+import "./components/ModalConfirmacion.css";
 
 function App() {
 
@@ -22,36 +28,114 @@ function App() {
 
   const [escaneos, setEscaneos] = useState([]);
 
-  // Leer el marbete mientras se escribe
-  const { codigoOriginal, peso } = leerMarbete(marbete);
+  const [mostrarModal, setMostrarModal] = useState(false);
 
-  // Buscar equivalencia
+  const [escaneoPendiente, setEscaneoPendiente] = useState(null);
+
+  const scannerRef = useRef(null);
+
+  // Leer marbete
+  const { codigoOriginal, peso, hu } = leerMarbete(marbete);
+
+  // Buscar datos
   const codigoSAP = buscarEquivalencia(codigoOriginal);
-
-  // Buscar nombre del producto
   const nombreProducto = buscarProducto(codigoSAP);
+
+  // ==========================
+  // CONFIRMAR AGREGAR
+  // ==========================
+
+  function confirmarAgregar() {
+
+    setEscaneos(prev => [...prev, escaneoPendiente]);
+
+    setUltimoEscaneo({
+      codigoOriginal,
+      codigoSAP,
+      nombre: nombreProducto,
+      peso
+    });
+
+    setMarbete("");
+
+    setMostrarModal(false);
+
+    setEscaneoPendiente(null);
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
+  // ==========================
+  // CANCELAR
+  // ==========================
+
+  function cancelarAgregar() {
+
+    setMostrarModal(false);
+
+    setEscaneoPendiente(null);
+
+    setMarbete("");
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
+  // ==========================
+  // AGREGAR ESCANEO
+  // ==========================
+
   function agregarEscaneo() {
 
-  if (!codigoSAP) return;
+    if (!codigoSAP) return;
 
-  const nuevo = {
-    codigo: codigoSAP,
-    nombre: nombreProducto,
-    peso: Number(peso)
-  };
+    const existeHU = escaneos.some(item => item.hu === hu);
 
-  setEscaneos([...escaneos, nuevo]);
+    if (existeHU) {
 
-  setUltimoEscaneo({
-    codigoOriginal,
-    codigoSAP,
-    nombre: nombreProducto,
-    peso
-  });
+      setEscaneoPendiente({
+        hu,
+        marbete,
+        codigo: codigoSAP,
+        nombre: nombreProducto,
+        peso: Number(peso)
+      });
 
-  setMarbete("");
+      setMostrarModal(true);
 
-}
+      return;
+
+    }
+
+    const nuevo = {
+      hu,
+      marbete,
+      codigo: codigoSAP,
+      nombre: nombreProducto,
+      peso: Number(peso)
+    };
+
+    setEscaneos(prev => [...prev, nuevo]);
+
+    setUltimoEscaneo({
+      codigoOriginal,
+      codigoSAP,
+      nombre: nombreProducto,
+      peso
+    });
+
+    setMarbete("");
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
 
   return (
 
@@ -61,55 +145,34 @@ function App() {
 
       <main className="principal">
 
-   <Scanner
-  marbete={marbete}
-  setMarbete={setMarbete}
-  agregarEscaneo={agregarEscaneo}
-/>
+        <Scanner
+          ref={scannerRef}
+          marbete={marbete}
+          setMarbete={setMarbete}
+          agregarEscaneo={agregarEscaneo}
+        />
 
-  <UltimoEscaneo
-  codigoOriginal={codigoOriginal}
-  codigoSAP={codigoSAP}
-  nombreProducto={nombreProducto}
-  peso={peso}
-/>
+        <UltimoEscaneo
+          codigoOriginal={ultimoEscaneo.codigoOriginal}
+          codigoSAP={ultimoEscaneo.codigoSAP}
+          nombreProducto={ultimoEscaneo.nombre}
+          peso={ultimoEscaneo.peso}
+        />
+
       </main>
 
-      <section className="resumen">
+      <Resumen escaneos={escaneos} />
 
-        <div className="dato">
-          <h3>📦 PIEZAS</h3>
-          <span>0</span>
-        </div>
+      <TablaEscaneos escaneos={escaneos} />
 
-        <div className="dato">
-          <h3>⚖ TOTAL KG</h3>
-          <span>0.00</span>
-        </div>
-
-      </section>
-
-      <section className="card">
-
-        <h2>📄 Escaneos Realizados</h2>
-
-        <table>
-
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>Peso</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-          </tbody>
-
-        </table>
-
-      </section>
+      <ModalConfirmacion
+        visible={mostrarModal}
+        hu={escaneoPendiente?.hu}
+        producto={escaneoPendiente?.nombre}
+        peso={escaneoPendiente?.peso}
+        onCancelar={cancelarAgregar}
+        onAceptar={confirmarAgregar}
+      />
 
     </div>
 

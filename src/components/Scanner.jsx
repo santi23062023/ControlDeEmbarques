@@ -6,36 +6,67 @@ const Scanner = forwardRef(function Scanner(
   inputRef
 ) {
 
-  function manejarSubmit(e) {
+  function manejarSubmit(e){
     e.preventDefault();
     agregarEscaneo();
   }
 
-  return (
-    <section className="card">
+  return(
 
-      <h2>📦 Escanear Marbete</h2>
+    <section className="scanner-card">
+
+      <div className="scanner-header">
+
+        <div className="scanner-icon">
+
+          📷
+
+        </div>
+
+        <div>
+
+          <h2>ESCANEAR MARBETE</h2>
+
+          <p>Escanee un HU porfis plis si no es molestia.</p>
+
+        </div>
+
+      </div>
 
       <form onSubmit={manejarSubmit}>
 
         <input
+
           ref={inputRef}
+
           className="scanner-input"
+
           type="text"
-          placeholder="Escanee aquí el marbete..."
+
+          placeholder="Esperando lector..."
+
           value={marbete}
-          onChange={(e) => setMarbete(e.target.value)}
+
+          onChange={(e)=>setMarbete(e.target.value)}
+
           autoFocus
+
         />
 
       </form>
 
       <div className="estado-scanner">
-        🟢 Listo para escanear
+
+          <span className="estado-punto"></span>
+
+          Esperando lector...
+
       </div>
 
     </section>
+
   );
+
 });
 
 export default Scanner;

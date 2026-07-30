@@ -1,30 +1,151 @@
-.card h2 {
-  margin-top: 0;
-  color: #0f4c81;
+.scanner-card{
+    
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:28px;
+
+    box-shadow:0 12px 25px rgba(0,0,0,.08);
+
+    transition:.30s;
+
 }
 
-.scanner-input {
-  width: 100%;
-  padding: 18px;
-  font-size: 20px;
-  border: 2px solid #d9e2ec;
-  border-radius: 12px;
-  outline: none;
-  transition: all .3s;
-  margin-top: 15px;
+/*=========================*/
+
+.scanner-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    margin-bottom:25px;
+
 }
 
-.scanner-input:focus {
-  border-color: #0f4c81;
-  box-shadow: 0 0 0 4px rgba(15,76,129,.15);
+.scanner-icon{
+
+    width:72px;
+
+    height:72px;
+
+    border-radius:18px;
+
+    background:#2563EB;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:34px;
+
+    box-shadow:0 10px 20px rgba(37,99,235,.25);
+
 }
 
-.estado-scanner {
-  margin-top: 18px;
-  padding: 14px;
-  border-radius: 10px;
-  background: #eef6ff;
-  color: #0f4c81;
-  font-weight: bold;
-  text-align: center;
+.scanner-header h2{
+
+    margin:0;
+
+    color:#0F4C81;
+
+    font-size:23px;
+
+}
+
+.scanner-header p{
+
+    margin-top:6px;
+
+    color:#64748B;
+
+    font-size:15px;
+
+}
+
+/*=========================*/
+
+.scanner-input{
+
+    width:100%;
+
+    height:70px;
+
+    border:3px solid #D8E3F0;
+
+    border-radius:16px;
+
+    padding:0 22px;
+
+    font-size:24px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.scanner-input:focus{
+
+    border-color:#2563EB;
+
+    box-shadow:0 0 0 6px rgba(37,99,235,.12);
+
+    outline:none;
+
+}
+
+/*=========================*/
+
+.estado-scanner{
+
+    margin-top:22px;
+
+    background:#ECFDF5;
+
+    color:#15803D;
+
+    border-radius:14px;
+
+    padding:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:700;
+
+}
+
+.estado-punto{
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+    background:#22C55E;
+
+    box-shadow:0 0 10px #22C55E;
+
+}
+.scanner-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 18px 35px rgba(0,0,0,.10);
+
 }

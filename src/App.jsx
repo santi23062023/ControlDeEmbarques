@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 import Header from "./components/Header";
@@ -15,6 +15,20 @@ import Resumen from "./components/Resumen";
 import ModalConfirmacion from "./components/ModalConfirmacion";
 import "./components/ModalConfirmacion.css";
 
+import { exportarExcel } from "./utils/exportarExcel";
+
+import {
+  guardarEmbarque,
+  cargarEmbarque,
+  eliminarEmbarque
+} from "./services/almacenamiento";
+
+import {
+  Plus,
+  Download,
+  Settings
+} from "lucide-react";
+
 function App() {
 
   const [marbete, setMarbete] = useState("");
@@ -28,18 +42,68 @@ function App() {
 
   const [escaneos, setEscaneos] = useState([]);
 
+  // Modal HU repetida
   const [mostrarModal, setMostrarModal] = useState(false);
-
   const [escaneoPendiente, setEscaneoPendiente] = useState(null);
+
+  // Modal eliminar
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  const [indiceEliminar, setIndiceEliminar] = useState(null);
+  const [mostrarModalNuevo, setMostrarModalNuevo] = useState(false);
 
   const scannerRef = useRef(null);
 
-  // Leer marbete
+  useEffect(() => {
+
+  const guardado = cargarEmbarque();
+
+  if (guardado.length > 0) {
+
+    setEmbarqueGuardado(guardado);
+
+    setMostrarModalRecuperar(true);
+
+  }
+
+}, []);
+
+  const [mostrarModalRecuperar, setMostrarModalRecuperar] = useState(false);
+
+const [embarqueGuardado, setEmbarqueGuardado] = useState([]);
+
+  useEffect(() => {
+
+  guardarEmbarque(escaneos);
+
+}, [escaneos]);
+
+useEffect(() => {
+
+  if (escaneos.length === 0) return;
+
+  const ultimo = escaneos[escaneos.length - 1];
+
+  setUltimoEscaneo({
+    codigoOriginal: ultimo.codigoOriginal || "",
+    codigoSAP: ultimo.codigo,
+    nombre: ultimo.nombre,
+    peso: ultimo.peso
+  });
+
+}, [escaneos]);
+  // ==========================
+  // LEER MARBETE
+  // ==========================
+
   const { codigoOriginal, peso, hu } = leerMarbete(marbete);
 
-  // Buscar datos
   const codigoSAP = buscarEquivalencia(codigoOriginal);
-  const nombreProducto = buscarProducto(codigoSAP);
+
+const nombreProducto = buscarProducto(codigoSAP);
+
+console.log("Código Original:", codigoOriginal);
+console.log("Código SAP:", codigoSAP);
+console.log("Producto:", nombreProducto);
 
   // ==========================
   // CONFIRMAR AGREGAR
@@ -69,7 +133,7 @@ function App() {
   }
 
   // ==========================
-  // CANCELAR
+  // CANCELAR AGREGAR
   // ==========================
 
   function cancelarAgregar() {
@@ -99,12 +163,14 @@ function App() {
     if (existeHU) {
 
       setEscaneoPendiente({
-        hu,
-        marbete,
-        codigo: codigoSAP,
-        nombre: nombreProducto,
-        peso: Number(peso)
-      });
+  hu,
+  marbete,
+  codigoOriginal,
+  codigo: codigoSAP,
+  nombre: nombreProducto,
+  peso: Number(peso),
+  fechaHora: new Date().toISOString()
+});
 
       setMostrarModal(true);
 
@@ -112,13 +178,15 @@ function App() {
 
     }
 
-    const nuevo = {
-      hu,
-      marbete,
-      codigo: codigoSAP,
-      nombre: nombreProducto,
-      peso: Number(peso)
-    };
+  const nuevo = {
+  hu,
+  marbete,
+  codigoOriginal,
+  codigo: codigoSAP,
+  nombre: nombreProducto,
+  peso: Number(peso),
+  fechaHora: new Date().toISOString()
+};
 
     setEscaneos(prev => [...prev, nuevo]);
 
@@ -137,13 +205,138 @@ function App() {
 
   }
 
+  // ==========================
+  // ELIMINAR ESCANEO
+  // ==========================
+
+  function eliminarEscaneo(indice) {
+
+    setIndiceEliminar(indice);
+
+    setMostrarModalEliminar(true);
+
+  }
+
+  function nuevoEmbarque() {
+
+  setMostrarModalNuevo(true);
+
+}
+
+function confirmarNuevoEmbarque() {
+
+  setEscaneos([]);
+
+  eliminarEmbarque();
+
+  setUltimoEscaneo({
+    codigoOriginal: "",
+    codigoSAP: "",
+    nombre: "",
+    peso: ""
+  });
+
+  setMarbete("");
+
+  setMostrarModalNuevo(false);
+
+  setTimeout(() => {
+    scannerRef.current?.focus();
+  }, 100);
+
+}
+
+function cancelarNuevoEmbarque() {
+
+  setMostrarModalNuevo(false);
+
+  setTimeout(() => {
+    scannerRef.current?.focus();
+  }, 100);
+
+}
+
+  // ==========================
+  // CONFIRMAR ELIMINAR
+  // ==========================
+
+  function confirmarEliminar() {
+
+    const nuevosEscaneos = escaneos.filter(
+      (_, i) => i !== indiceEliminar
+    );
+
+    setEscaneos(nuevosEscaneos);
+
+    setMostrarModalEliminar(false);
+
+    setIndiceEliminar(null);
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
+  // ==========================
+  // CANCELAR ELIMINAR
+  // ==========================
+
+  function cancelarEliminar() {
+
+    setMostrarModalEliminar(false);
+
+    setIndiceEliminar(null);
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
   return (
+<div className="app">
 
-    <div className="app">
+  <Header />
 
-      <Header />
+  <div className="toolbar">
 
-      <main className="principal">
+  <button
+    className="btn-toolbar nuevo"
+    onClick={nuevoEmbarque}
+  >
+
+    <Plus size={20} />
+
+    <span>Nuevo Embarque</span>
+
+  </button>
+
+  <button
+    className="btn-toolbar"
+    onClick={() => exportarExcel(escaneos)}
+  >
+
+    <Download size={20} />
+
+    <span>Exportar Excel</span>
+
+  </button>
+
+  <button
+    className="btn-toolbar"
+    disabled
+  >
+
+    <Settings size={20} />
+
+    <span>Configuración</span>
+
+  </button>
+
+</div>
+
+<main className="principal">
 
         <Scanner
           ref={scannerRef}
@@ -161,22 +354,56 @@ function App() {
 
       </main>
 
-      <Resumen escaneos={escaneos} />
+    <Resumen escaneos={escaneos} />
 
-      <TablaEscaneos escaneos={escaneos} />
+<TablaEscaneos
+  escaneos={escaneos}
+  eliminarEscaneo={eliminarEscaneo}
+/>
 
-      <ModalConfirmacion
-        visible={mostrarModal}
-        hu={escaneoPendiente?.hu}
-        producto={escaneoPendiente?.nombre}
-        peso={escaneoPendiente?.peso}
-        onCancelar={cancelarAgregar}
-        onAceptar={confirmarAgregar}
-      />
+{/* Modal HU repetida */}
 
-    </div>
+<ModalConfirmacion
+  visible={mostrarModal}
+  titulo="⚠️ HU YA ESCANEADA"
+  mensaje="La siguiente pieza ya fue escaneada. ¿Deseas agregarla nuevamente?"
+  hu={escaneoPendiente?.hu}
+  producto={escaneoPendiente?.nombre}
+  peso={escaneoPendiente?.peso}
+  textoAceptar="Agregar nuevamente"
+  textoCancelar="Cancelar"
+  onCancelar={cancelarAgregar}
+  onAceptar={confirmarAgregar}
+/>
 
-  );
+{/* Modal eliminar */}
+
+<ModalConfirmacion
+  visible={mostrarModalEliminar}
+  titulo="🗑 Eliminar Escaneo"
+  mensaje="¿Deseas eliminar este escaneo?"
+  hu={escaneos[indiceEliminar]?.hu}
+  producto={escaneos[indiceEliminar]?.nombre}
+  peso={escaneos[indiceEliminar]?.peso}
+  textoAceptar="Eliminar"
+  textoCancelar="Cancelar"
+  onCancelar={cancelarEliminar}
+  onAceptar={confirmarEliminar}
+/>
+<ModalConfirmacion
+  visible={mostrarModalNuevo}
+  titulo="🆕 Nuevo Embarque"
+  mensaje="¿Deseas iniciar un nuevo embarque? Se eliminarán todos los escaneos."
+  textoAceptar="Iniciar"
+  textoCancelar="Cancelar"
+  onCancelar={cancelarNuevoEmbarque}
+  onAceptar={confirmarNuevoEmbarque}
+/>
+
+
+</div>
+
+);
 
 }
 

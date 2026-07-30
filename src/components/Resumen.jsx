@@ -1,3 +1,5 @@
+import "./Resumen.css";
+
 function Resumen({ escaneos }) {
 
   const piezas = escaneos.length;
@@ -6,23 +8,72 @@ function Resumen({ escaneos }) {
     return total + item.peso;
   }, 0);
 
+  const productos = new Set(
+    escaneos.map(item => item.codigo)
+  ).size;
+
+  const hora = new Date().toLocaleTimeString("es-MX", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
   return (
 
-    <section className="resumen">
+    <section className="dashboard">
 
-      <div className="dato">
+      <div className="card-dashboard azul">
 
-        <h3>📦 PIEZAS</h3>
+        <div className="icono">📦</div>
 
-        <span>{piezas}</span>
+        <div>
+
+          <h4>PIEZAS</h4>
+
+          <span>{piezas}</span>
+
+        </div>
 
       </div>
 
-      <div className="dato">
+      <div className="card-dashboard verde">
 
-        <h3>⚖ TOTAL KG</h3>
+        <div className="icono">⚖</div>
 
-        <span>{totalKg.toFixed(2)}</span>
+        <div>
+
+          <h4>TOTAL KG</h4>
+
+          <span>{totalKg.toFixed(2)}</span>
+
+        </div>
+
+      </div>
+
+      <div className="card-dashboard naranja">
+
+        <div className="icono">📋</div>
+
+        <div>
+
+          <h4>PRODUCTOS</h4>
+
+          <span>{productos}</span>
+
+        </div>
+
+      </div>
+
+      <div className="card-dashboard morado">
+
+        <div className="icono">🕒</div>
+
+        <div>
+
+          <h4>HORA</h4>
+
+          <span>{hora}</span>
+
+        </div>
 
       </div>
 

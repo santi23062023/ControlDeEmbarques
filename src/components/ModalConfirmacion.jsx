@@ -2,11 +2,19 @@ function ModalConfirmacion({
 
   visible,
 
+  titulo,
+
+  mensaje,
+
   hu,
 
   producto,
 
   peso,
+
+  textoAceptar = "Aceptar",
+
+  textoCancelar = "Cancelar",
 
   onCancelar,
 
@@ -22,54 +30,49 @@ function ModalConfirmacion({
 
       <div className="modal">
 
-        <h2>⚠️ HU YA ESCANEADA</h2>
+        <h2>{titulo}</h2>
 
         <hr />
 
-        <p>
-
-          La siguiente pieza ya fue escaneada.
-
-        </p>
+        <p>{mensaje}</p>
 
         <br />
 
-        <strong>HU</strong>
+        {hu && (
+          <>
+            <strong>HU</strong>
+            <p>{hu}</p>
+          </>
+        )}
 
-        <p>{hu}</p>
+        {producto && (
+          <>
+            <strong>Producto</strong>
+            <p>{producto}</p>
+          </>
+        )}
 
-        <strong>Producto</strong>
-
-        <p>{producto}</p>
-
-        <strong>Peso</strong>
-
-        <p>{peso} Kg</p>
+        {peso && (
+          <>
+            <strong>Peso</strong>
+            <p>{peso} Kg</p>
+          </>
+        )}
 
         <div className="botones">
 
           <button
-
             className="cancelar"
-
             onClick={onCancelar}
-
           >
-
-            Cancelar
-
+            {textoCancelar}
           </button>
 
           <button
-
             className="aceptar"
-
             onClick={onAceptar}
-
           >
-
-            Agregar nuevamente
-
+            {textoAceptar}
           </button>
 
         </div>

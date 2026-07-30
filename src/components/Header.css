@@ -1,36 +1,145 @@
-.header {
-  background: linear-gradient(135deg, #0f4c81, #1b6ca8);
-  color: white;
-  padding: 25px 35px;
-  border-radius: 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 12px 25px rgba(0,0,0,.15);
+.header{
+
+    background:linear-gradient(135deg,#0F4C81,#1E6BB8);
+
+    color:white;
+
+    border-radius:20px;
+
+    padding:24px 34px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+    transition:.30s;
+
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 700;
+/*==========================
+  IZQUIERDA
+==========================*/
+
+.header-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
 }
 
-.header p {
-  margin-top: 8px;
-  opacity: .9;
+.logo{
+
+    width:68px;
+
+    height:68px;
+
+    background:rgba(255,255,255,.15);
+
+    border-radius:18px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:34px;
+
+    backdrop-filter:blur(5px);
+
 }
 
-.estado {
-  text-align: right;
-  font-size: 15px;
+.header h1{
+
+    margin:0;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    letter-spacing:.5px;
+
 }
 
-.online {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background: #3ddc84;
-  border-radius: 50%;
-  margin-right: 8px;
-  box-shadow: 0 0 10px #3ddc84;
+.header p{
+
+    margin-top:6px;
+
+    opacity:.92;
+
+    font-size:15px;
+
+}
+
+/*==========================
+  DERECHA
+==========================*/
+
+.estado{
+
+    background:rgba(255,255,255,.12);
+
+    padding:15px 20px;
+
+    border-radius:14px;
+
+    text-align:right;
+
+    min-width:170px;
+
+}
+
+.estado-linea{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-weight:600;
+
+    margin-bottom:8px;
+
+}
+
+.estado small{
+
+    opacity:.9;
+
+    font-size:13px;
+
+}
+
+/*==========================
+  ONLINE
+==========================*/
+
+.online{
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+    background:#22C55E;
+
+    box-shadow:0 0 10px #22C55E;
+
+}
+
+.header:hover{
+
+    box-shadow:0 20px 45px rgba(0,0,0,.18);
+
 }

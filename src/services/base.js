@@ -1,7 +1,4 @@
-const productos = {
-  "11331081": "CHAMBARETE",
-  "22110040": "NEW YORK"
-};
+import productos from "../data/base.json";
 
 export function buscarProducto(codigoSAP) {
   return productos[codigoSAP] || "";

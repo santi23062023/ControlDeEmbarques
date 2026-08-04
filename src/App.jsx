@@ -17,11 +17,20 @@ import "./components/ModalConfirmacion.css";
 
 import { exportarExcel } from "./utils/exportarExcel";
 
+import ResumenProductos from "./components/ResumenProductos";
+
+import InformacionEmbarque from "./components/InformacionEmbarque";
+
 import {
   guardarEmbarque,
   cargarEmbarque,
   eliminarEmbarque
 } from "./services/almacenamiento";
+
+import {
+  obtenerClientes,
+  guardarCliente
+} from "./services/clientes";
 
 import {
   Plus,
@@ -41,6 +50,16 @@ function App() {
   });
 
   const [escaneos, setEscaneos] = useState([]);
+
+  const [vistaTabla, setVistaTabla] = useState("detalle");
+
+  const [cliente, setCliente] = useState("");
+
+  const [fechaInicio] = useState(
+  new Date().toLocaleString()
+);
+
+  const [clientesRecientes, setClientesRecientes] = useState([]);
 
   // Modal HU repetida
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -71,12 +90,29 @@ function App() {
 
 const [embarqueGuardado, setEmbarqueGuardado] = useState([]);
 
-  useEffect(() => {
+useEffect(() => {
 
-  guardarEmbarque(escaneos);
+  guardarEmbarque({
 
-}, [escaneos]);
+    cliente,
 
+    fechaInicio,
+
+    escaneos,
+
+    ultimoEscaneo,
+
+    vistaTabla
+
+  });
+
+}, [
+  cliente,
+  fechaInicio,
+  escaneos,
+  ultimoEscaneo,
+  vistaTabla
+]);
 useEffect(() => {
 
   if (escaneos.length === 0) return;
@@ -90,7 +126,15 @@ useEffect(() => {
     peso: ultimo.peso
   });
 
+  
+
 }, [escaneos]);
+
+useEffect(() => {
+
+  setClientesRecientes(obtenerClientes());
+
+}, []);
   // ==========================
   // LEER MARBETE
   // ==========================
@@ -295,10 +339,17 @@ function cancelarNuevoEmbarque() {
   }
 
   return (
+  
 <div className="app">
 
   <Header />
 
+<InformacionEmbarque
+  cliente={cliente}
+  setCliente={setCliente}
+  clientesRecientes={clientesRecientes}
+  fechaInicio={fechaInicio}
+/>
   <div className="toolbar">
 
   <button
@@ -314,7 +365,12 @@ function cancelarNuevoEmbarque() {
 
   <button
     className="btn-toolbar"
-    onClick={() => exportarExcel(escaneos)}
+    onClick={() =>
+  exportarExcel({
+    cliente,
+    escaneos
+  })
+}
   >
 
     <Download size={20} />
@@ -356,10 +412,38 @@ function cancelarNuevoEmbarque() {
 
     <Resumen escaneos={escaneos} />
 
-<TablaEscaneos
-  escaneos={escaneos}
-  eliminarEscaneo={eliminarEscaneo}
-/>
+<div className="selector-tabla">
+
+  <button
+    className={vistaTabla === "detalle" ? "tab-activa" : "tab"}
+    onClick={() => setVistaTabla("detalle")}
+  >
+    📄 Detalle
+  </button>
+
+  <button
+    className={vistaTabla === "resumen" ? "tab-activa" : "tab"}
+    onClick={() => setVistaTabla("resumen")}
+  >
+    📊 Resumen
+  </button>
+
+</div>
+
+{vistaTabla === "detalle" ? (
+
+  <TablaEscaneos
+    escaneos={escaneos}
+    eliminarEscaneo={eliminarEscaneo}
+  />
+
+) : (
+
+  <ResumenProductos
+    escaneos={escaneos}
+  />
+
+)}
 
 {/* Modal HU repetida */}
 

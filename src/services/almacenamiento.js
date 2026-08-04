@@ -1,19 +1,32 @@
 const CLAVE = "embarque_actual";
 
-export function guardarEmbarque(escaneos) {
-  localStorage.setItem(CLAVE, JSON.stringify(escaneos));
+export function guardarEmbarque(embarque) {
+  localStorage.setItem(
+    CLAVE,
+    JSON.stringify(embarque)
+  );
 }
 
 export function cargarEmbarque() {
+
   const datos = localStorage.getItem(CLAVE);
 
-  if (!datos) return [];
+  if (!datos) {
+    return null;
+  }
 
   try {
+
     return JSON.parse(datos);
-  } catch {
-    return [];
+
+  } catch (error) {
+
+    console.error("Error al cargar embarque:", error);
+
+    return null;
+
   }
+
 }
 
 export function eliminarEmbarque() {

@@ -184,3 +184,137 @@ tbody tr:hover {
 }
 
 }
+/*==========================
+  CAMBIO DE VISTA
+==========================*/
+
+.selector-tabla{
+
+    display:flex;
+
+    gap:12px;
+
+    margin:25px 0 18px;
+
+}
+
+.tab,
+.tab-activa{
+
+    padding:12px 22px;
+
+    border-radius:12px;
+
+    border:none;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.tab{
+
+    background:#E5E7EB;
+
+    color:#374151;
+
+}
+
+.tab:hover{
+
+    background:#D1D5DB;
+
+}
+
+.tab-activa{
+
+    background:#2563EB;
+
+    color:white;
+
+}
+
+.info-embarque{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:24px;
+
+    margin-top:25px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.info-embarque h2{
+
+    margin-top:0;
+
+    color:#0F4C81;
+
+    margin-bottom:20px;
+
+}
+
+.info-grid{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr 1fr;
+
+    gap:20px;
+
+}
+
+.info-grid label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+    color:#475569;
+
+}
+
+.info-grid input{
+
+    width:100%;
+
+    padding:14px;
+
+    border:2px solid #D9E2EC;
+
+    border-radius:12px;
+
+    font-size:15px;
+
+    background:white;
+
+}
+
+.info-grid input:disabled{
+
+    background:#F8FAFC;
+
+    color:#475569;
+
+}
+
+@media(max-width:900px){
+
+    .info-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}

@@ -1,0 +1,31 @@
+.tabla-card{
+    background:white;
+    border-radius:20px;
+    padding:22px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+
+.tabla-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.tabla-header h2{
+    margin:0;
+    color:#0F4C81;
+}
+
+.tabla-header span{
+    background:#EAF2FF;
+    color:#2563EB;
+    padding:8px 14px;
+    border-radius:25px;
+    font-weight:600;
+}
+
+.tabla-scroll{
+    max-height:450px;
+    overflow:auto;
+}

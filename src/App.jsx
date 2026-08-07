@@ -15,11 +15,14 @@ import Resumen from "./components/Resumen";
 import ModalConfirmacion from "./components/ModalConfirmacion";
 import "./components/ModalConfirmacion.css";
 
-import { exportarExcel } from "./utils/exportarExcel";
+import { exportarExcel } from "./exportarExcel";
 
 import ResumenProductos from "./components/ResumenProductos";
 
 import InformacionEmbarque from "./components/InformacionEmbarque";
+
+import { imprimirTicket } from "./ticket/imprimirTicket";
+
 
 import {
   guardarEmbarque,
@@ -55,6 +58,7 @@ function App() {
 
   const [cliente, setCliente] = useState("");
 
+
   const [fechaInicio] = useState(
   new Date().toLocaleString()
 );
@@ -69,6 +73,7 @@ function App() {
   const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
   const [indiceEliminar, setIndiceEliminar] = useState(null);
   const [mostrarModalNuevo, setMostrarModalNuevo] = useState(false);
+
 
   const scannerRef = useRef(null);
 
@@ -352,46 +357,55 @@ function cancelarNuevoEmbarque() {
 />
   <div className="toolbar">
 
-  <button
-    className="btn-toolbar nuevo"
-    onClick={nuevoEmbarque}
-  >
-
-    <Plus size={20} />
-
-    <span>Nuevo Embarque</span>
-
-  </button>
 
   <button
-    className="btn-toolbar"
-    onClick={() =>
-  exportarExcel({
-    cliente,
-    escaneos
-  })
-}
-  >
+  className="btn-toolbar nuevo"
+  onClick={nuevoEmbarque}
+>
+  <Plus size={20} />
+  <span>Nuevo Embarque</span>
+</button>
 
-    <Download size={20} />
+{/* ESTE BOTÓN ES EL NUEVO */}
 
-    <span>Exportar Excel</span>
+<button
+  className="btn-toolbar"
+  onClick={() =>
+    imprimirTicket({
+      pedido: `PED-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}${String(new Date().getDate()).padStart(2, "0")}-001`,
+      cliente,
+      fecha: new Date().toLocaleString(),
+      escaneos
+    })
+  }
+>
+  🖨 Imprimir Ticket
+</button>
 
-  </button>
+{/* AQUÍ SIGUE EL BOTÓN QUE YA TENÍAS */}
 
-  <button
-    className="btn-toolbar"
-    disabled
-  >
+<button
+  className="btn-toolbar"
+  onClick={() =>
+    exportarExcel({
+      cliente,
+      escaneos
+    })
+  }
+>
+  <Download size={20} />
+  <span>Exportar Excel</span>
+</button>
 
-    <Settings size={20} />
-
-    <span>Configuración</span>
-
-  </button>
+<button
+  className="btn-toolbar"
+  disabled
+>
+  <Settings size={20} />
+  <span>Configuración</span>
+</button>
 
 </div>
-
 <main className="principal">
 
         <Scanner

@@ -1,0 +1,137 @@
+.ticket{
+
+    width:80mm;
+
+    margin:auto;
+
+    padding:10px;
+
+    font-family:monospace;
+
+    background:white;
+
+    color:black;
+
+}
+
+.logo{
+
+    text-align:center;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
+
+}
+
+.ticket h2{
+
+    text-align:center;
+
+    font-size:18px;
+
+    margin:0;
+
+}
+
+.ticket h3{
+
+    text-align:center;
+
+    margin:6px 0 12px;
+
+    font-size:16px;
+
+}
+
+.ticket h4{
+
+    text-align:center;
+
+    margin:10px 0;
+
+}
+
+.ticket p{
+
+    margin:3px 0;
+
+    font-size:14px;
+
+}
+
+.ticket hr{
+
+    border:none;
+
+    border-top:1px dashed black;
+
+    margin:10px 0;
+
+}
+
+.ticket table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    font-size:13px;
+
+}
+
+.ticket th{
+
+    text-align:left;
+
+    border-bottom:1px solid black;
+
+    padding-bottom:4px;
+
+}
+
+.ticket td{
+
+    padding:3px 0;
+
+}
+
+.ticket td:last-child,
+
+.ticket th:last-child{
+
+    text-align:right;
+
+}
+
+.fin{
+
+    margin-top:15px;
+
+    text-align:center;
+
+    font-weight:bold;
+
+}
+
+@media print{
+
+    body{
+
+        margin:0;
+
+    }
+
+    .ticket{
+
+        width:80mm;
+
+        margin:0;
+
+        padding:5mm;
+
+    }
+
+}

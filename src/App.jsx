@@ -22,7 +22,7 @@ import ResumenProductos from "./components/ResumenProductos";
 import InformacionEmbarque from "./components/InformacionEmbarque";
 
 import { imprimirTicket } from "./ticket/imprimirTicket";
-import { obtenerEmbarque, guardarEmbarque as guardarEmbarqueOnline } from "./services/embarquesOnline";
+import { obtenerEmbarque, listarEmbarques, guardarEmbarque as guardarEmbarqueOnline } from "./services/embarquesOnline";
 
 
 import {
@@ -132,23 +132,29 @@ async function probarNetlify() {
 
   try {
 
-    const idGuardado = localStorage.getItem("pedidoOnline");
+    console.log("📥 Consultando embarques guardados en Netlify...");
 
-    if (!idGuardado) {
-      alert("⚠️ No hay ningún embarque guardado en este dispositivo.");
+    const embarques = await listarEmbarques();
+
+    console.log(
+      "✅ EMBARQUES EN NETLIFY:",
+      embarques
+    );
+
+    if (!embarques || embarques.length === 0) {
+      alert("⚠️ No hay embarques guardados en Netlify.");
       return;
     }
 
-    console.log("📥 Recuperando embarque:", idGuardado);
-
-    const datos = await obtenerEmbarque(idGuardado);
+    // Tomar el embarque más reciente
+    const datos = embarques[0];
 
     console.log(
-      "✅ EMBARQUE RECUPERADO DESDE NETLIFY:",
+      "📦 Cargando embarque más reciente:",
       datos
     );
 
-    setPedidoOnline(datos.pedido || datos.id || idGuardado);
+    setPedidoOnline(datos.pedido || datos.id || "");
 
     setCliente(datos.cliente || "");
 
@@ -167,11 +173,16 @@ async function probarNetlify() {
 
     setMarbete("");
 
+    // Recordar cuál fue el último embarque recuperado
+    if (datos.id) {
+      localStorage.setItem("pedidoOnline", datos.id);
+    }
+
     alert(
-      "✅ EMBARQUE RECUPERADO\\n\\n" +
-      "Pedido: " + (datos.pedido || datos.id) + "\\n" +
-      "Cliente: " + (datos.cliente || "Sin cliente") + "\\n" +
-      "Piezas: " + (datos.totalPiezas || 0) + "\\n" +
+      "✅ EMBARQUE RECUPERADO\n\n" +
+      "Pedido: " + (datos.pedido || datos.id || "Sin pedido") + "\n" +
+      "Cliente: " + (datos.cliente || "Sin cliente") + "\n" +
+      "Piezas: " + (datos.totalPiezas || 0) + "\n" +
       "Total Kg: " +
       Number(datos.totalKg || 0).toFixed(2)
     );
@@ -183,12 +194,12 @@ async function probarNetlify() {
   } catch (error) {
 
     console.error(
-      "❌ ERROR RECUPERANDO EMBARQUE:",
+      "❌ ERROR RECUPERANDO EMBARQUES:",
       error
     );
 
     alert(
-      "❌ ERROR AL RECUPERAR\\n\\n" +
+      "❌ ERROR AL RECUPERAR EMBARQUES\n\n" +
       error.message
     );
   }

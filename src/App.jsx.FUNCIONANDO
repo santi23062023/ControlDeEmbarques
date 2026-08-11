@@ -1,0 +1,638 @@
+import { useState, useRef, useEffect } from "react";
+import "./App.css";
+
+import Header from "./components/Header";
+import Scanner from "./components/Scanner";
+import UltimoEscaneo from "./components/UltimoEscaneo";
+
+import { leerMarbete } from "./utils/marbete";
+import { buscarEquivalencia } from "./services/equivalencias";
+import { buscarProducto } from "./services/base";
+
+import TablaEscaneos from "./components/TablaEscaneos";
+import Resumen from "./components/Resumen";
+
+import ModalConfirmacion from "./components/ModalConfirmacion";
+import "./components/ModalConfirmacion.css";
+
+import { exportarExcel } from "./exportarExcel";
+
+import ResumenProductos from "./components/ResumenProductos";
+
+import InformacionEmbarque from "./components/InformacionEmbarque";
+
+import { imprimirTicket } from "./ticket/imprimirTicket";
+import { obtenerEmbarque, guardarEmbarque as guardarEmbarqueOnline } from "./services/embarquesOnline";
+
+
+import {
+  guardarEmbarque,
+  cargarEmbarque,
+  eliminarEmbarque
+} from "./services/almacenamiento";
+
+import {
+  obtenerClientes,
+  guardarCliente
+} from "./services/clientes";
+
+import {
+  Plus,
+  Download,
+  Settings
+} from "lucide-react";
+
+function App() {
+
+const [pedidoOnline, setPedidoOnline] = useState(
+  () => localStorage.getItem("pedidoOnline") || ""
+);
+
+const [marbete, setMarbete] = useState("");
+
+const [ultimoEscaneo, setUltimoEscaneo] = useState({
+  codigoOriginal: "",
+  codigoSAP: "",
+  nombre: "",
+  peso: ""
+});
+
+const [escaneos, setEscaneos] = useState([]);
+
+const [vistaTabla, setVistaTabla] = useState("detalle");
+
+const [cliente, setCliente] = useState("");
+
+const [fechaInicio, setFechaInicio] = useState(
+  new Date().toLocaleString()
+);
+
+const [clientesRecientes, setClientesRecientes] = useState([]);
+
+const [mostrarModal, setMostrarModal] = useState(false);
+const [escaneoPendiente, setEscaneoPendiente] = useState(null);
+
+const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+const [indiceEliminar, setIndiceEliminar] = useState(null);
+const [mostrarModalNuevo, setMostrarModalNuevo] = useState(false);
+
+
+const scannerRef = useRef(null);
+
+async function guardarDatosEnNetlify() {
+  try {
+
+    const id = `PED-${new Date().getFullYear()}${String(
+      new Date().getMonth() + 1
+    ).padStart(2, "0")}${String(
+      new Date().getDate()
+    ).padStart(2, "0")}-${Date.now()}`;
+
+    const datos = {
+      id,
+      pedido: id,
+      cliente,
+      fechaInicio,
+      escaneos,
+      ultimoEscaneo,
+      totalPiezas: escaneos.length,
+      totalKg: escaneos.reduce(
+        (total, item) => total + Number(item.peso || 0),
+        0
+      )
+    };
+
+    const resultado = await guardarEmbarqueOnline(datos);
+
+    setPedidoOnline(id);
+    localStorage.setItem("pedidoOnline", id);
+
+    console.log("✅ EMBARQUE GUARDADO EN NETLIFY:", resultado);
+
+    alert(
+      "✅ DATOS GUARDADOS\\n\\n" +
+      "Pedido: " + id + "\\n" +
+      "Cliente: " + (cliente || "Sin cliente") + "\\n" +
+      "Piezas: " + datos.totalPiezas + "\\n" +
+      "Total Kg: " + datos.totalKg.toFixed(2)
+    );
+
+  } catch (error) {
+
+    console.error("❌ ERROR GUARDANDO EN NETLIFY:", error);
+
+    alert(
+      "❌ ERROR AL GUARDAR\\n\\n" +
+      error.message
+    );
+  }
+}
+
+async function probarNetlify() {
+
+  try {
+
+    const idGuardado = localStorage.getItem("pedidoOnline");
+
+    if (!idGuardado) {
+      alert("⚠️ No hay ningún embarque guardado en este dispositivo.");
+      return;
+    }
+
+    console.log("📥 Recuperando embarque:", idGuardado);
+
+    const datos = await obtenerEmbarque(idGuardado);
+
+    console.log(
+      "✅ EMBARQUE RECUPERADO DESDE NETLIFY:",
+      datos
+    );
+
+    setPedidoOnline(datos.pedido || datos.id || idGuardado);
+
+    setCliente(datos.cliente || "");
+
+    setFechaInicio(datos.fechaInicio || "");
+
+    setEscaneos(datos.escaneos || []);
+
+    setUltimoEscaneo(
+      datos.ultimoEscaneo || {
+        codigoOriginal: "",
+        codigoSAP: "",
+        nombre: "",
+        peso: ""
+      }
+    );
+
+    setMarbete("");
+
+    alert(
+      "✅ EMBARQUE RECUPERADO\\n\\n" +
+      "Pedido: " + (datos.pedido || datos.id) + "\\n" +
+      "Cliente: " + (datos.cliente || "Sin cliente") + "\\n" +
+      "Piezas: " + (datos.totalPiezas || 0) + "\\n" +
+      "Total Kg: " +
+      Number(datos.totalKg || 0).toFixed(2)
+    );
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  } catch (error) {
+
+    console.error(
+      "❌ ERROR RECUPERANDO EMBARQUE:",
+      error
+    );
+
+    alert(
+      "❌ ERROR AL RECUPERAR\\n\\n" +
+      error.message
+    );
+  }
+}
+
+useEffect(() => {
+
+  const guardado = cargarEmbarque();
+
+  if (guardado.length > 0) {
+
+    setEmbarqueGuardado(guardado);
+
+    setMostrarModalRecuperar(true);
+
+  }
+
+}, []);
+
+  const [mostrarModalRecuperar, setMostrarModalRecuperar] = useState(false);
+
+
+useEffect(() => {
+
+  guardarEmbarque({
+
+    cliente,
+
+    fechaInicio,
+
+    escaneos,
+
+    ultimoEscaneo,
+
+    vistaTabla
+
+  });
+
+}, [
+  cliente,
+  fechaInicio,
+  escaneos,
+  ultimoEscaneo,
+  vistaTabla
+]);
+useEffect(() => {
+
+  if (escaneos.length === 0) return;
+
+  const ultimo = escaneos[escaneos.length - 1];
+
+  setUltimoEscaneo({
+    codigoOriginal: ultimo.codigoOriginal || "",
+    codigoSAP: ultimo.codigo,
+    nombre: ultimo.nombre,
+    peso: ultimo.peso
+  });
+
+  
+
+}, [escaneos]);
+
+useEffect(() => {
+
+  setClientesRecientes(obtenerClientes());
+
+}, []);
+  // ==========================
+  // LEER MARBETE
+  // ==========================
+
+  const { codigoOriginal, peso, hu } = leerMarbete(marbete);
+
+  const codigoSAP = buscarEquivalencia(codigoOriginal);
+
+const nombreProducto = buscarProducto(codigoSAP);
+
+console.log("Código Original:", codigoOriginal);
+console.log("Código SAP:", codigoSAP);
+console.log("Producto:", nombreProducto);
+
+  // ==========================
+  // CONFIRMAR AGREGAR
+  // ==========================
+
+  function confirmarAgregar() {
+
+    setEscaneos(prev => [...prev, escaneoPendiente]);
+
+    setUltimoEscaneo({
+      codigoOriginal,
+      codigoSAP,
+      nombre: nombreProducto,
+      peso
+    });
+
+    setMarbete("");
+
+    setMostrarModal(false);
+
+    setEscaneoPendiente(null);
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
+  // ==========================
+  // CANCELAR AGREGAR
+  // ==========================
+
+  function cancelarAgregar() {
+
+    setMostrarModal(false);
+
+    setEscaneoPendiente(null);
+
+    setMarbete("");
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
+  // ==========================
+  // AGREGAR ESCANEO
+  // ==========================
+
+  function agregarEscaneo() {
+
+    if (!codigoSAP) return;
+
+    const existeHU = escaneos.some(item => item.hu === hu);
+
+    if (existeHU) {
+
+      setEscaneoPendiente({
+  hu,
+  marbete,
+  codigoOriginal,
+  codigo: codigoSAP,
+  nombre: nombreProducto,
+  peso: Number(peso),
+  fechaHora: new Date().toISOString()
+});
+
+      setMostrarModal(true);
+
+      return;
+
+    }
+
+  const nuevo = {
+  hu,
+  marbete,
+  codigoOriginal,
+  codigo: codigoSAP,
+  nombre: nombreProducto,
+  peso: Number(peso),
+  fechaHora: new Date().toISOString()
+};
+
+    setEscaneos(prev => [...prev, nuevo]);
+
+    setUltimoEscaneo({
+      codigoOriginal,
+      codigoSAP,
+      nombre: nombreProducto,
+      peso
+    });
+
+    setMarbete("");
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
+  // ==========================
+  // ELIMINAR ESCANEO
+  // ==========================
+
+  function eliminarEscaneo(indice) {
+
+    setIndiceEliminar(indice);
+
+    setMostrarModalEliminar(true);
+
+  }
+
+  function nuevoEmbarque() {
+
+  setMostrarModalNuevo(true);
+
+}
+
+function confirmarNuevoEmbarque() {
+
+  setEscaneos([]);
+
+  eliminarEmbarque();
+
+  setUltimoEscaneo({
+    codigoOriginal: "",
+    codigoSAP: "",
+    nombre: "",
+    peso: ""
+  });
+
+  setMarbete("");
+
+  setMostrarModalNuevo(false);
+
+  setTimeout(() => {
+    scannerRef.current?.focus();
+  }, 100);
+
+}
+
+function cancelarNuevoEmbarque() {
+
+  setMostrarModalNuevo(false);
+
+  setTimeout(() => {
+    scannerRef.current?.focus();
+  }, 100);
+
+}
+
+  // ==========================
+  // CONFIRMAR ELIMINAR
+  // ==========================
+
+  function confirmarEliminar() {
+
+    const nuevosEscaneos = escaneos.filter(
+      (_, i) => i !== indiceEliminar
+    );
+
+    setEscaneos(nuevosEscaneos);
+
+    setMostrarModalEliminar(false);
+
+    setIndiceEliminar(null);
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
+  // ==========================
+  // CANCELAR ELIMINAR
+  // ==========================
+
+  function cancelarEliminar() {
+
+    setMostrarModalEliminar(false);
+
+    setIndiceEliminar(null);
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  }
+
+  return (
+  
+<div className="app">
+
+  <Header />
+
+<InformacionEmbarque
+  cliente={cliente}
+  setCliente={setCliente}
+  clientesRecientes={clientesRecientes}
+  fechaInicio={fechaInicio}
+/>
+  <div className="toolbar">
+
+
+  <button
+  className="btn-toolbar nuevo"
+  onClick={nuevoEmbarque}
+>
+  <Plus size={20} />
+  <span>Nuevo Embarque</span>
+</button>
+
+<button
+  className="btn-toolbar"
+  onClick={guardarDatosEnNetlify}
+>
+  💾 Guardar datos de Zebra
+</button>
+
+{/* ESTE BOTÓN ES EL NUEVO */}
+
+<button
+  className="btn-toolbar"
+  onClick={() =>
+    imprimirTicket({
+      pedido: `PED-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}${String(new Date().getDate()).padStart(2, "0")}-001`,
+      cliente,
+      fecha: new Date().toLocaleString(),
+      escaneos
+    })
+  }
+>
+  🖨 Imprimir Ticket
+</button>
+
+{/* AQUÍ SIGUE EL BOTÓN QUE YA TENÍAS */}
+
+<button
+  className="btn-toolbar"
+  onClick={() =>
+    exportarExcel({
+      cliente,
+      escaneos
+    })
+  }
+>
+  <Download size={20} />
+  <span>Exportar Excel</span>
+</button>
+
+<button
+  className="btn-toolbar"
+  onClick={probarNetlify}
+>
+  📥 Ver datos de Zebra
+</button>
+
+<button
+  className="btn-toolbar"
+  disabled
+>
+  <Settings size={20} />
+  <span>Configuración</span>
+</button>
+
+</div>
+<main className="principal">
+
+        <Scanner
+          ref={scannerRef}
+          marbete={marbete}
+          setMarbete={setMarbete}
+          agregarEscaneo={agregarEscaneo}
+        />
+
+        <UltimoEscaneo
+          codigoOriginal={ultimoEscaneo.codigoOriginal}
+          codigoSAP={ultimoEscaneo.codigoSAP}
+          nombreProducto={ultimoEscaneo.nombre}
+          peso={ultimoEscaneo.peso}
+        />
+
+      </main>
+
+    <Resumen escaneos={escaneos} />
+
+<div className="selector-tabla">
+
+  <button
+    className={vistaTabla === "detalle" ? "tab-activa" : "tab"}
+    onClick={() => setVistaTabla("detalle")}
+  >
+    📄 Detalle
+  </button>
+
+  <button
+    className={vistaTabla === "resumen" ? "tab-activa" : "tab"}
+    onClick={() => setVistaTabla("resumen")}
+  >
+    📊 Resumen
+  </button>
+
+</div>
+
+{vistaTabla === "detalle" ? (
+
+  <TablaEscaneos
+    escaneos={escaneos}
+    eliminarEscaneo={eliminarEscaneo}
+  />
+
+) : (
+
+  <ResumenProductos
+    escaneos={escaneos}
+  />
+
+)}
+
+{/* Modal HU repetida */}
+
+<ModalConfirmacion
+  visible={mostrarModal}
+  titulo="⚠️ HU YA ESCANEADA"
+  mensaje="La siguiente pieza ya fue escaneada. ¿Deseas agregarla nuevamente?"
+  hu={escaneoPendiente?.hu}
+  producto={escaneoPendiente?.nombre}
+  peso={escaneoPendiente?.peso}
+  textoAceptar="Agregar nuevamente"
+  textoCancelar="Cancelar"
+  onCancelar={cancelarAgregar}
+  onAceptar={confirmarAgregar}
+/>
+
+{/* Modal eliminar */}
+
+<ModalConfirmacion
+  visible={mostrarModalEliminar}
+  titulo="🗑 Eliminar Escaneo"
+  mensaje="¿Deseas eliminar este escaneo?"
+  hu={escaneos[indiceEliminar]?.hu}
+  producto={escaneos[indiceEliminar]?.nombre}
+  peso={escaneos[indiceEliminar]?.peso}
+  textoAceptar="Eliminar"
+  textoCancelar="Cancelar"
+  onCancelar={cancelarEliminar}
+  onAceptar={confirmarEliminar}
+/>
+<ModalConfirmacion
+  visible={mostrarModalNuevo}
+  titulo="🆕 Nuevo Embarque"
+  mensaje="¿Deseas iniciar un nuevo embarque? Se eliminarán todos los escaneos."
+  textoAceptar="Iniciar"
+  textoCancelar="Cancelar"
+  onCancelar={cancelarNuevoEmbarque}
+  onAceptar={confirmarNuevoEmbarque}
+/>
+
+
+</div>
+
+);
+
+}
+
+export default App;

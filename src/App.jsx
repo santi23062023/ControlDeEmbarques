@@ -132,35 +132,42 @@ async function probarNetlify() {
 
   try {
 
-    console.log("📥 Consultando embarques guardados en Netlify...");
+    const idGuardado = localStorage.getItem("pedidoOnline");
 
-    const embarques = await listarEmbarques();
-
-    console.log(
-      "✅ EMBARQUES EN NETLIFY:",
-      embarques
-    );
-
-    if (!embarques || embarques.length === 0) {
-      alert("⚠️ No hay embarques guardados en Netlify.");
+    if (!idGuardado) {
+      alert(
+        "⚠️ No hay ningún pedido guardado en este dispositivo."
+      );
       return;
     }
 
-    // Tomar el embarque más reciente
-    const datos = embarques[0];
+    console.log(
+      "📥 Recuperando pedido exacto:",
+      idGuardado
+    );
+
+    const datos = await obtenerEmbarque(idGuardado);
 
     console.log(
-      "📦 Cargando embarque más reciente:",
+      "✅ PEDIDO RECUPERADO DESDE NETLIFY:",
       datos
     );
 
-    setPedidoOnline(datos.pedido || datos.id || "");
+    setPedidoOnline(
+      datos.pedido || datos.id || idGuardado
+    );
 
-    setCliente(datos.cliente || "");
+    setCliente(
+      datos.cliente || ""
+    );
 
-    setFechaInicio(datos.fechaInicio || "");
+    setFechaInicio(
+      datos.fechaInicio || ""
+    );
 
-    setEscaneos(datos.escaneos || []);
+    setEscaneos(
+      datos.escaneos || []
+    );
 
     setUltimoEscaneo(
       datos.ultimoEscaneo || {
@@ -173,16 +180,17 @@ async function probarNetlify() {
 
     setMarbete("");
 
-    // Recordar cuál fue el último embarque recuperado
-    if (datos.id) {
-      localStorage.setItem("pedidoOnline", datos.id);
-    }
-
     alert(
       "✅ EMBARQUE RECUPERADO\n\n" +
-      "Pedido: " + (datos.pedido || datos.id || "Sin pedido") + "\n" +
-      "Cliente: " + (datos.cliente || "Sin cliente") + "\n" +
-      "Piezas: " + (datos.totalPiezas || 0) + "\n" +
+      "Pedido: " +
+      (datos.pedido || datos.id || idGuardado) +
+      "\n" +
+      "Cliente: " +
+      (datos.cliente || "Sin cliente") +
+      "\n" +
+      "Piezas: " +
+      (datos.totalPiezas || 0) +
+      "\n" +
       "Total Kg: " +
       Number(datos.totalKg || 0).toFixed(2)
     );
@@ -194,15 +202,17 @@ async function probarNetlify() {
   } catch (error) {
 
     console.error(
-      "❌ ERROR RECUPERANDO EMBARQUES:",
+      "❌ ERROR RECUPERANDO PEDIDO:",
       error
     );
 
     alert(
-      "❌ ERROR AL RECUPERAR EMBARQUES\n\n" +
+      "❌ ERROR AL RECUPERAR\n\n" +
       error.message
     );
+
   }
+
 }
 
 useEffect(() => {

@@ -132,29 +132,37 @@ async function probarNetlify() {
 
   try {
 
-    const idGuardado = localStorage.getItem("pedidoOnline");
+    console.log(
+      "📥 Consultando último embarque global en Netlify..."
+    );
 
-    if (!idGuardado) {
+    const embarques = await listarEmbarques();
+
+    console.log(
+      "☁️ EMBARQUES RECIBIDOS:",
+      embarques
+    );
+
+    if (!embarques || embarques.length === 0) {
+
       alert(
-        "⚠️ No hay ningún pedido guardado en este dispositivo."
+        "⚠️ No hay embarques guardados en Netlify."
       );
+
       return;
     }
 
-    console.log(
-      "📥 Recuperando pedido exacto:",
-      idGuardado
-    );
-
-    const datos = await obtenerEmbarque(idGuardado);
+    // El backend ya los devuelve ordenados
+    // del más reciente al más antiguo.
+    const datos = embarques[0];
 
     console.log(
-      "✅ PEDIDO RECUPERADO DESDE NETLIFY:",
+      "🥇 ÚLTIMO EMBARQUE GLOBAL:",
       datos
     );
 
     setPedidoOnline(
-      datos.pedido || datos.id || idGuardado
+      datos.pedido || datos.id || ""
     );
 
     setCliente(
@@ -180,10 +188,19 @@ async function probarNetlify() {
 
     setMarbete("");
 
+    // Solo recordar el último ID localmente.
+    // La recuperación ya NO depende de localStorage.
+    if (datos.id) {
+      localStorage.setItem(
+        "pedidoOnline",
+        datos.id
+      );
+    }
+
     alert(
-      "✅ EMBARQUE RECUPERADO\n\n" +
+      "✅ ÚLTIMO EMBARQUE RECUPERADO\n\n" +
       "Pedido: " +
-      (datos.pedido || datos.id || idGuardado) +
+      (datos.pedido || datos.id || "Sin pedido") +
       "\n" +
       "Cliente: " +
       (datos.cliente || "Sin cliente") +
@@ -202,12 +219,12 @@ async function probarNetlify() {
   } catch (error) {
 
     console.error(
-      "❌ ERROR RECUPERANDO PEDIDO:",
+      "❌ ERROR RECUPERANDO EMBARQUE GLOBAL:",
       error
     );
 
     alert(
-      "❌ ERROR AL RECUPERAR\n\n" +
+      "❌ ERROR AL RECUPERAR EMBARQUE\n\n" +
       error.message
     );
 

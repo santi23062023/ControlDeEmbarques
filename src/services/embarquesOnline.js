@@ -13,9 +13,7 @@ export async function guardarEmbarque(datos) {
   const resultado = await respuesta.json();
 
   if (!respuesta.ok || !resultado.success) {
-    throw new Error(
-      resultado.error || "No se pudo guardar el embarque"
-    );
+    throw new Error(resultado.error || "No se pudo guardar el embarque");
   }
 
   return resultado;
@@ -29,9 +27,7 @@ export async function obtenerEmbarque(id) {
   const resultado = await respuesta.json();
 
   if (!respuesta.ok || !resultado.success) {
-    throw new Error(
-      resultado.error || "No se pudo obtener el embarque"
-    );
+    throw new Error(resultado.error || "No se pudo obtener el embarque");
   }
 
   return resultado.datos;

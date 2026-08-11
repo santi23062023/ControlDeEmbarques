@@ -22,7 +22,7 @@ import ResumenProductos from "./components/ResumenProductos";
 import InformacionEmbarque from "./components/InformacionEmbarque";
 
 import { imprimirTicket } from "./ticket/imprimirTicket";
-import { obtenerEmbarque } from "./services/embarquesOnline";
+import { obtenerEmbarque, guardarEmbarque as guardarEmbarqueOnline } from "./services/embarquesOnline";
 
 
 import {
@@ -43,9 +43,59 @@ import {
 } from "lucide-react";
 
 function App() {
+
+  const [pedidoOnline, setPedidoOnline] = useState("");
+
+  async function guardarDatosEnNetlify() {
+    try {
+      const id = `PED-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}${String(new Date().getDate()).padStart(2, "0")}-${Date.now()}`;
+
+      const datos = {
+        id,
+        pedido: id,
+        cliente,
+        fechaInicio,
+        escaneos,
+        ultimoEscaneo,
+        totalPiezas: escaneos.length,
+        totalKg: escaneos.reduce(
+          (total, item) => total + Number(item.peso || 0),
+          0
+        )
+      };
+
+      const resultado = await guardarEmbarqueOnline(datos);
+
+      setPedidoOnline(id);
+
+      console.log("✅ EMBARQUE GUARDADO EN NETLIFY:", resultado);
+
+      alert(
+        "✅ DATOS GUARDADOS\n\n" +
+        "Pedido: " + id + "\n" +
+        "Cliente: " + (cliente || "Sin cliente") + "\n" +
+        "Piezas: " + datos.totalPiezas + "\n" +
+        "Total Kg: " + datos.totalKg.toFixed(2)
+      );
+
+    } catch (error) {
+      console.error("❌ ERROR GUARDANDO EN NETLIFY:", error);
+
+      alert(
+        "❌ ERROR AL GUARDAR\n\n" +
+        error.message
+      );
+    }
+  }
+
   async function probarNetlify() {
     try {
-      const datos = await obtenerEmbarque("PRUEBA-001");
+     if (!pedidoOnline) {
+  alert("⚠️ Primero debes guardar un embarque en Netlify.");
+  return;
+}
+
+const datos = await obtenerEmbarque(pedidoOnline);
 
       alert(
         "✅ CONEXIÓN CORRECTA\n\n" +
@@ -389,6 +439,13 @@ function cancelarNuevoEmbarque() {
 >
   <Plus size={20} />
   <span>Nuevo Embarque</span>
+</button>
+
+<button
+  className="btn-toolbar"
+  onClick={guardarDatosEnNetlify}
+>
+  💾 Guardar datos de Zebra
 </button>
 
 {/* ESTE BOTÓN ES EL NUEVO */}

@@ -22,6 +22,7 @@ import ResumenProductos from "./components/ResumenProductos";
 import InformacionEmbarque from "./components/InformacionEmbarque";
 
 import { imprimirTicket } from "./ticket/imprimirTicket";
+import { obtenerEmbarque } from "./services/embarquesOnline";
 
 
 import {
@@ -42,6 +43,30 @@ import {
 } from "lucide-react";
 
 function App() {
+  async function probarNetlify() {
+    try {
+      const datos = await obtenerEmbarque("PRUEBA-001");
+
+      alert(
+        "✅ CONEXIÓN CORRECTA\n\n" +
+        "Pedido: " + datos.pedido + "\n" +
+        "Cliente: " + datos.cliente + "\n" +
+        "Piezas: " + datos.totalPiezas + "\n" +
+        "Total Kg: " + datos.totalKg
+      );
+
+      console.log("Datos recibidos desde Netlify:", datos);
+
+    } catch (error) {
+      console.error("Error conectando con Netlify:", error);
+
+      alert(
+        "❌ ERROR DE CONEXIÓN\n\n" +
+        error.message
+      );
+    }
+  }
+
 
   const [marbete, setMarbete] = useState("");
 
@@ -395,6 +420,13 @@ function cancelarNuevoEmbarque() {
 >
   <Download size={20} />
   <span>Exportar Excel</span>
+</button>
+
+<button
+  className="btn-toolbar"
+  onClick={probarNetlify}
+>
+  📥 Ver datos de Zebra
 </button>
 
 <button

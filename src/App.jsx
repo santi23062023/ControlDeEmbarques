@@ -78,13 +78,19 @@ function App() {
   const scannerRef = useRef(null);
 
   useEffect(() => {
+
   const guardado = cargarEmbarque();
 
-  if (guardado && guardado.escaneos && guardado.escaneos.length > 0) {
+  if (guardado.length > 0) {
+
     setEmbarqueGuardado(guardado);
+
     setMostrarModalRecuperar(true);
+
   }
+
 }, []);
+
   const [mostrarModalRecuperar, setMostrarModalRecuperar] = useState(false);
 
 const [embarqueGuardado, setEmbarqueGuardado] = useState([]);
@@ -364,21 +370,14 @@ function cancelarNuevoEmbarque() {
 
 <button
   className="btn-toolbar"
-  onClick={async () => {
-    try {
-      const { registerPlugin } = await import("@capacitor/core");
-      const Printer = registerPlugin("Printer");
-
-      await Printer.imprimir({
-        texto: "PRUEBA DESDE ANDROID\\n\\n"
-      });
-
-      alert("Impresión enviada correctamente");
-    } catch (error) {
-      console.error("Error de impresión:", error);
-      alert("Error de impresión: " + (error?.message || error));
-    }
-  }}
+  onClick={() =>
+    imprimirTicket({
+      pedido: `PED-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}${String(new Date().getDate()).padStart(2, "0")}-001`,
+      cliente,
+      fecha: new Date().toLocaleString(),
+      escaneos
+    })
+  }
 >
   🖨 Imprimir Ticket
 </button>

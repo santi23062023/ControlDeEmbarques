@@ -44,56 +44,94 @@ import {
 
 function App() {
 
-  const [pedidoOnline, setPedidoOnline] = useState(
+const [pedidoOnline, setPedidoOnline] = useState(
   () => localStorage.getItem("pedidoOnline") || ""
 );
 
-  async function guardarDatosEnNetlify() {
-    try {
-      const id = `PED-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}${String(new Date().getDate()).padStart(2, "0")}-${Date.now()}`;
+const [marbete, setMarbete] = useState("");
 
-      const datos = {
-        id,
-        pedido: id,
-        cliente,
-        fechaInicio,
-        escaneos,
-        ultimoEscaneo,
-        totalPiezas: escaneos.length,
-        totalKg: escaneos.reduce(
-          (total, item) => total + Number(item.peso || 0),
-          0
-        )
-      };
+const [ultimoEscaneo, setUltimoEscaneo] = useState({
+  codigoOriginal: "",
+  codigoSAP: "",
+  nombre: "",
+  peso: ""
+});
 
-      const resultado = await guardarEmbarqueOnline(datos);
+const [escaneos, setEscaneos] = useState([]);
 
-      setPedidoOnline(id);
+const [vistaTabla, setVistaTabla] = useState("detalle");
 
-      localStorage.setItem("pedidoOnline", id);
+const [cliente, setCliente] = useState("");
 
-      console.log("✅ EMBARQUE GUARDADO EN NETLIFY:", resultado);
+const [fechaInicio, setFechaInicio] = useState(
+  new Date().toLocaleString()
+);
 
-      alert(
-        "✅ DATOS GUARDADOS\n\n" +
-        "Pedido: " + id + "\n" +
-        "Cliente: " + (cliente || "Sin cliente") + "\n" +
-        "Piezas: " + datos.totalPiezas + "\n" +
-        "Total Kg: " + datos.totalKg.toFixed(2)
-      );
+const [clientesRecientes, setClientesRecientes] = useState([]);
 
-    } catch (error) {
-      console.error("❌ ERROR GUARDANDO EN NETLIFY:", error);
+const [mostrarModal, setMostrarModal] = useState(false);
+const [escaneoPendiente, setEscaneoPendiente] = useState(null);
 
-      alert(
-        "❌ ERROR AL GUARDAR\n\n" +
-        error.message
-      );
-    }
-  }
+const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+const [indiceEliminar, setIndiceEliminar] = useState(null);
+const [mostrarModalNuevo, setMostrarModalNuevo] = useState(false);
 
-  async function probarNetlify() {
+
+const scannerRef = useRef(null);
+
+async function guardarDatosEnNetlify() {
   try {
+
+    const id = `PED-${new Date().getFullYear()}${String(
+      new Date().getMonth() + 1
+    ).padStart(2, "0")}${String(
+      new Date().getDate()
+    ).padStart(2, "0")}-${Date.now()}`;
+
+    const datos = {
+      id,
+      pedido: id,
+      cliente,
+      fechaInicio,
+      escaneos,
+      ultimoEscaneo,
+      totalPiezas: escaneos.length,
+      totalKg: escaneos.reduce(
+        (total, item) => total + Number(item.peso || 0),
+        0
+      )
+    };
+
+    const resultado = await guardarEmbarqueOnline(datos);
+
+    setPedidoOnline(id);
+    localStorage.setItem("pedidoOnline", id);
+
+    console.log("✅ EMBARQUE GUARDADO EN NETLIFY:", resultado);
+
+    alert(
+      "✅ DATOS GUARDADOS\\n\\n" +
+      "Pedido: " + id + "\\n" +
+      "Cliente: " + (cliente || "Sin cliente") + "\\n" +
+      "Piezas: " + datos.totalPiezas + "\\n" +
+      "Total Kg: " + datos.totalKg.toFixed(2)
+    );
+
+  } catch (error) {
+
+    console.error("❌ ERROR GUARDANDO EN NETLIFY:", error);
+
+    alert(
+      "❌ ERROR AL GUARDAR\\n\\n" +
+      error.message
+    );
+  }
+}
+
+async function probarNetlify() {
+
+  try {
+
     const idGuardado = localStorage.getItem("pedidoOnline");
 
     if (!idGuardado) {
@@ -105,9 +143,11 @@ function App() {
 
     const datos = await obtenerEmbarque(idGuardado);
 
-    console.log("✅ EMBARQUE RECUPERADO DESDE NETLIFY:", datos);
+    console.log(
+      "✅ EMBARQUE RECUPERADO DESDE NETLIFY:",
+      datos
+    );
 
-    // Recuperar información del embarque
     setPedidoOnline(datos.pedido || datos.id || idGuardado);
 
     setCliente(datos.cliente || "");
@@ -128,11 +168,12 @@ function App() {
     setMarbete("");
 
     alert(
-      "✅ EMBARQUE RECUPERADO\n\n" +
-      "Pedido: " + (datos.pedido || datos.id) + "\n" +
-      "Cliente: " + (datos.cliente || "Sin cliente") + "\n" +
-      "Piezas: " + (datos.totalPiezas || 0) + "\n" +
-      "Total Kg: " + Number(datos.totalKg || 0).toFixed(2)
+      "✅ EMBARQUE RECUPERADO\\n\\n" +
+      "Pedido: " + (datos.pedido || datos.id) + "\\n" +
+      "Cliente: " + (datos.cliente || "Sin cliente") + "\\n" +
+      "Piezas: " + (datos.totalPiezas || 0) + "\\n" +
+      "Total Kg: " +
+      Number(datos.totalKg || 0).toFixed(2)
     );
 
     setTimeout(() => {
@@ -140,27 +181,20 @@ function App() {
     }, 100);
 
   } catch (error) {
-    console.error("❌ ERROR RECUPERANDO EMBARQUE:", error);
+
+    console.error(
+      "❌ ERROR RECUPERANDO EMBARQUE:",
+      error
+    );
 
     alert(
-      "❌ ERROR AL RECUPERAR\n\n" +
+      "❌ ERROR AL RECUPERAR\\n\\n" +
       error.message
     );
   }
 }
 
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [escaneoPendiente, setEscaneoPendiente] = useState(null);
-
-  // Modal eliminar
-  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
-  const [indiceEliminar, setIndiceEliminar] = useState(null);
-  const [mostrarModalNuevo, setMostrarModalNuevo] = useState(false);
-
-
-  const scannerRef = useRef(null);
-
-  useEffect(() => {
+useEffect(() => {
 
   const guardado = cargarEmbarque();
 
@@ -176,7 +210,6 @@ function App() {
 
   const [mostrarModalRecuperar, setMostrarModalRecuperar] = useState(false);
 
-const [embarqueGuardado, setEmbarqueGuardado] = useState([]);
 
 useEffect(() => {
 

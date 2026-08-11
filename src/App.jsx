@@ -44,7 +44,9 @@ import {
 
 function App() {
 
-  const [pedidoOnline, setPedidoOnline] = useState("");
+  const [pedidoOnline, setPedidoOnline] = useState(
+  () => localStorage.getItem("pedidoOnline") || ""
+);
 
   async function guardarDatosEnNetlify() {
     try {
@@ -67,6 +69,8 @@ function App() {
       const resultado = await guardarEmbarqueOnline(datos);
 
       setPedidoOnline(id);
+
+      localStorage.setItem("pedidoOnline", id);
 
       console.log("✅ EMBARQUE GUARDADO EN NETLIFY:", resultado);
 

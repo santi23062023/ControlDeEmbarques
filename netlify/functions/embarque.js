@@ -3,6 +3,9 @@ import { getStore } from "@netlify/blobs";
 export default async (request) => {
   const store = getStore("embarques");
 
+  // ==========================================
+  // GUARDAR EMBARQUE
+  // ==========================================
   if (request.method === "POST") {
     try {
       const datos = await request.json();
@@ -26,6 +29,7 @@ export default async (request) => {
           }
         }
       );
+
     } catch (error) {
       return new Response(
         JSON.stringify({
@@ -42,17 +46,45 @@ export default async (request) => {
     }
   }
 
+  // ==========================================
+  // CONSULTAR EMBARQUE(S)
+  // ==========================================
   if (request.method === "GET") {
-    const id = new URL(request.url).searchParams.get("id");
 
-    if (!id) {
+    const url = new URL(request.url);
+    const id = url.searchParams.get("id");
+
+    // ------------------------------------------
+    // SI VIENE ID → DEVOLVER EMBARQUE ESPECÍFICO
+    // ------------------------------------------
+    if (id) {
+
+      const datos = await store.get(id, {
+        type: "json"
+      });
+
+      if (!datos) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "Embarque no encontrado"
+          }),
+          {
+            status: 404,
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
+        );
+      }
+
       return new Response(
         JSON.stringify({
-          success: false,
-          error: "Falta el id del embarque"
+          success: true,
+          datos
         }),
         {
-          status: 400,
+          status: 200,
           headers: {
             "Content-Type": "application/json"
           }
@@ -60,29 +92,56 @@ export default async (request) => {
       );
     }
 
-    const datos = await store.get(id, {
-      type: "json"
+    // ------------------------------------------
+    // SIN ID → LISTAR EMBARQUES
+    // ------------------------------------------
+
+    const resultado = await store.list();
+
+    const embarques = [];
+
+    for (const item of resultado.blobs) {
+
+      try {
+
+        const datos = await store.get(item.key, {
+          type: "json"
+        });
+
+        if (datos) {
+          embarques.push(datos);
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Error leyendo embarque:",
+          item.key,
+          error
+        );
+
+      }
+    }
+
+    // Ordenar del más reciente al más antiguo
+    embarques.sort((a, b) => {
+
+      const fechaA = new Date(
+        a.guardado || a.fechaInicio || 0
+      ).getTime();
+
+      const fechaB = new Date(
+        b.guardado || b.fechaInicio || 0
+      ).getTime();
+
+      return fechaB - fechaA;
     });
-
-    if (!datos) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Embarque no encontrado"
-        }),
-        {
-          status: 404,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-    }
 
     return new Response(
       JSON.stringify({
         success: true,
-        datos
+        total: embarques.length,
+        embarques
       }),
       {
         status: 200,
@@ -93,7 +152,16 @@ export default async (request) => {
     );
   }
 
-  return new Response("Método no permitido", {
-    status: 405
-  });
+  return new Response(
+    JSON.stringify({
+      success: false,
+      error: "Método no permitido"
+    }),
+    {
+      status: 405,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+  );
 };

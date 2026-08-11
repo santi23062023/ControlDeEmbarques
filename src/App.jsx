@@ -236,7 +236,7 @@ useEffect(() => {
 
   const guardado = cargarEmbarque();
 
-  if (guardado.length > 0) {
+  if (guardado && guardado.length > 0) {
 
     setEmbarqueGuardado(guardado);
 

@@ -1,0 +1,15 @@
+/workspaces/ControlDeEmbarques/printer-bridge/bin/Debug/net10.0/printer-bridge
+/workspaces/ControlDeEmbarques/printer-bridge/bin/Debug/net10.0/printer-bridge.deps.json
+/workspaces/ControlDeEmbarques/printer-bridge/bin/Debug/net10.0/printer-bridge.runtimeconfig.json
+/workspaces/ControlDeEmbarques/printer-bridge/bin/Debug/net10.0/printer-bridge.dll
+/workspaces/ControlDeEmbarques/printer-bridge/bin/Debug/net10.0/printer-bridge.pdb
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/printer-bridge.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/printer-bridge.AssemblyInfoInputs.cache
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/printer-bridge.AssemblyInfo.cs
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/printer-bridge.csproj.CoreCompileInputs.cache
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/printer-bridge.sourcelink.json
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/printer-bridge.dll
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/refint/printer-bridge.dll
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/printer-bridge.pdb
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/printer-bridge.genruntimeconfig.cache
+/workspaces/ControlDeEmbarques/printer-bridge/obj/Debug/net10.0/ref/printer-bridge.dll

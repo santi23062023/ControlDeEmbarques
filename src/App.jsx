@@ -93,58 +93,62 @@ function App() {
   }
 
   async function probarNetlify() {
-    try {
-     if (!pedidoOnline) {
-  alert("⚠️ Primero debes guardar un embarque en Netlify.");
-  return;
+  try {
+    const idGuardado = localStorage.getItem("pedidoOnline");
+
+    if (!idGuardado) {
+      alert("⚠️ No hay ningún embarque guardado en este dispositivo.");
+      return;
+    }
+
+    console.log("📥 Recuperando embarque:", idGuardado);
+
+    const datos = await obtenerEmbarque(idGuardado);
+
+    console.log("✅ EMBARQUE RECUPERADO DESDE NETLIFY:", datos);
+
+    // Recuperar información del embarque
+    setPedidoOnline(datos.pedido || datos.id || idGuardado);
+
+    setCliente(datos.cliente || "");
+
+    setFechaInicio(datos.fechaInicio || "");
+
+    setEscaneos(datos.escaneos || []);
+
+    setUltimoEscaneo(
+      datos.ultimoEscaneo || {
+        codigoOriginal: "",
+        codigoSAP: "",
+        nombre: "",
+        peso: ""
+      }
+    );
+
+    setMarbete("");
+
+    alert(
+      "✅ EMBARQUE RECUPERADO\n\n" +
+      "Pedido: " + (datos.pedido || datos.id) + "\n" +
+      "Cliente: " + (datos.cliente || "Sin cliente") + "\n" +
+      "Piezas: " + (datos.totalPiezas || 0) + "\n" +
+      "Total Kg: " + Number(datos.totalKg || 0).toFixed(2)
+    );
+
+    setTimeout(() => {
+      scannerRef.current?.focus();
+    }, 100);
+
+  } catch (error) {
+    console.error("❌ ERROR RECUPERANDO EMBARQUE:", error);
+
+    alert(
+      "❌ ERROR AL RECUPERAR\n\n" +
+      error.message
+    );
+  }
 }
 
-const datos = await obtenerEmbarque(pedidoOnline);
-
-      alert(
-        "✅ CONEXIÓN CORRECTA\n\n" +
-        "Pedido: " + datos.pedido + "\n" +
-        "Cliente: " + datos.cliente + "\n" +
-        "Piezas: " + datos.totalPiezas + "\n" +
-        "Total Kg: " + datos.totalKg
-      );
-
-      console.log("Datos recibidos desde Netlify:", datos);
-
-    } catch (error) {
-      console.error("Error conectando con Netlify:", error);
-
-      alert(
-        "❌ ERROR DE CONEXIÓN\n\n" +
-        error.message
-      );
-    }
-  }
-
-
-  const [marbete, setMarbete] = useState("");
-
-  const [ultimoEscaneo, setUltimoEscaneo] = useState({
-    codigoOriginal: "",
-    codigoSAP: "",
-    nombre: "",
-    peso: ""
-  });
-
-  const [escaneos, setEscaneos] = useState([]);
-
-  const [vistaTabla, setVistaTabla] = useState("detalle");
-
-  const [cliente, setCliente] = useState("");
-
-
-  const [fechaInicio] = useState(
-  new Date().toLocaleString()
-);
-
-  const [clientesRecientes, setClientesRecientes] = useState([]);
-
-  // Modal HU repetida
   const [mostrarModal, setMostrarModal] = useState(false);
   const [escaneoPendiente, setEscaneoPendiente] = useState(null);
 

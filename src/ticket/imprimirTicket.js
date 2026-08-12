@@ -131,6 +131,8 @@ body {
   margin: 0;
   padding: 0;
 
+  box-sizing: border-box;
+
   background: #fff;
 
 }
@@ -148,9 +150,9 @@ body {
 
   padding:
     3mm
-    1.5mm
+    0
     5mm
-    1.5mm;
+    0;
 
 }
 
@@ -469,9 +471,9 @@ td {
 
   padding:
     3mm
-    1.5mm
+    0
     5mm
-    1.5mm;
+    0;
 
 }
 

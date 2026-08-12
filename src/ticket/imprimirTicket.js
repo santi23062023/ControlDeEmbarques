@@ -311,7 +311,7 @@ body {
 
 table {
 
-  width: 100%;
+  width: 94%;
 
   border-collapse: collapse;
 
@@ -345,50 +345,27 @@ td {
 
 }
 
-/* Código */
+/* =========================
+   COLUMNAS GENERALES
+   ========================= */
 
 .codigo {
-
-  width: 23%;
-
   font-weight: bold;
-
   text-align: left;
-
 }
-
-/* Producto */
 
 .producto {
-
-  width: 52%;
-
   text-align: left;
-
   word-break: break-word;
-
 }
-
-/* Piezas */
 
 .piezas {
-
-  width: 10%;
-
   text-align: center;
-
 }
 
-/* Peso */
-
 .peso {
-
-  width: 28%;
-
- text-align: left;
-
+  text-align: left;
   white-space: nowrap;
-
 }
 
 /* =========================

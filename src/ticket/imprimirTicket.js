@@ -360,7 +360,7 @@ td {
 
 .producto {
 
-  width: 61%;
+  width: 60%;
 
   text-align: left;
 
@@ -382,7 +382,7 @@ td {
 
 .peso {
 
-  width: 19%;
+  width: 20%;
 
   text-align: right;
 

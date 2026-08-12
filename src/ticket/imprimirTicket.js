@@ -56,7 +56,7 @@ export function imprimirTicket({
       <div class="fila-ticket">
         <span class="fila-codigo">${item.codigo}</span>
         <span class="fila-producto">${item.nombre}</span>
-     <span class="fila-peso">25.60</span>
+     <span class="fila-peso">${Number(item.peso || 0).toFixed(2)}</span>
       </div>
     `;
 
@@ -75,7 +75,7 @@ export function imprimirTicket({
         <span class="fila-codigo">${item.codigo}</span>
         <span class="fila-producto">${item.nombre}</span>
         <span class="fila-piezas">${item.piezas}</span>
-        <span class="fila-peso">25.60</span>
+        <span class="fila-peso">${Number(item.peso || 0).toFixed(2)}</span>
       </div>
     `;
 

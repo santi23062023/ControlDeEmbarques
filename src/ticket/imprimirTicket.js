@@ -332,7 +332,9 @@ td {
 
 .fila-ticket {
 
-  position: relative;
+  display: grid;
+
+  grid-template-columns: 23% 45% 32%;
 
   width: 100%;
 
@@ -340,26 +342,19 @@ td {
 
   line-height: 16px;
 
-  border-bottom:
-    1px dotted #aaa;
-
-  white-space: nowrap;
-
-  overflow: visible;
+  border-bottom: 1px dotted #aaa;
 
 }
 
 .fila-codigo {
 
-  position: absolute;
-
-  left: 0;
-
-  width: 23%;
+  min-width: 0;
 
   font-weight: bold;
 
   text-align: left;
+
+  white-space: nowrap;
 
   overflow: hidden;
 
@@ -367,27 +362,19 @@ td {
 
 .fila-producto {
 
-  position: absolute;
-
-  left: 23%;
-
-  width: 52%;
+  min-width: 0;
 
   text-align: left;
 
-  overflow: hidden;
-
   white-space: nowrap;
+
+  overflow: hidden;
 
 }
 
 .fila-peso {
 
-  position: absolute;
-
-  left: 68%;
-
-  width: 32%;
+  min-width: 0;
 
   text-align: left;
 
@@ -397,29 +384,31 @@ td {
 
 }
 
+/* =========================
+   RESUMEN
+   ========================= */
+
+.resumen-fila {
+
+  grid-template-columns: 21% 57% 10% 12%;
+
+}
+
 .resumen-fila .fila-codigo {
 
-  left: 0;
-
-  width: 21%;
+  width: auto;
 
 }
 
 .resumen-fila .fila-producto {
 
-  left: 21%;
-
-  width: 59%;
+  width: auto;
 
 }
 
 .fila-piezas {
 
-  position: absolute;
-
-  left: 80%;
-
-  width: 8%;
+  min-width: 0;
 
   text-align: center;
 
@@ -429,9 +418,7 @@ td {
 
 .resumen-fila .fila-peso {
 
-  left: 78%;
-
-  width: 22%;
+  width: auto;
 
 }
 

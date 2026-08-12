@@ -53,19 +53,11 @@ export function imprimirTicket({
   escaneos.forEach(item => {
 
     detalleHTML += `
-      <tr>
-        <td class="codigo">
-          ${item.codigo}
-        </td>
-
-        <td class="producto">
-          ${item.nombre}
-        </td>
-
-        <td class="peso">
-          ${Number(item.peso || 0).toFixed(2)}
-        </td>
-      </tr>
+      <div class="fila-ticket">
+        <span class="fila-codigo">${item.codigo}</span>
+        <span class="fila-producto">${item.nombre}</span>
+        <span class="fila-peso">${Number(item.peso || 0).toFixed(2)}</span>
+      </div>
     `;
 
   });
@@ -79,25 +71,12 @@ export function imprimirTicket({
   Object.values(resumen).forEach(item => {
 
     resumenHTML += `
-      <tr>
-
-        <td class="codigo">
-          ${item.codigo}
-        </td>
-
-        <td class="producto">
-          ${item.nombre}
-        </td>
-
-        <td class="piezas">
-          ${item.piezas}
-        </td>
-
-        <td class="peso">
-          ${item.kg.toFixed(2)}
-        </td>
-
-      </tr>
+      <div class="fila-ticket resumen-fila">
+        <span class="fila-codigo">${item.codigo}</span>
+        <span class="fila-producto">${item.nombre}</span>
+        <span class="fila-piezas">${item.piezas}</span>
+        <span class="fila-peso">${item.kg.toFixed(2)}</span>
+      </div>
     `;
 
   });
@@ -346,75 +325,112 @@ td {
 }
 
 /* =========================
-   COLUMNAS GENERALES
+   FILAS DEL TICKET
    ========================= */
 
-.codigo {
-  font-weight: bold;
-  text-align: left;
-}
+.fila-ticket {
 
-.producto {
-  text-align: left;
-  word-break: break-word;
-}
+  position: relative;
 
-.piezas {
-  text-align: center;
-}
+  width: 100%;
 
-.peso {
-  text-align: left;
+  min-height: 16px;
+
+  line-height: 16px;
+
+  border-bottom:
+    1px dotted #aaa;
+
   white-space: nowrap;
+
+  overflow: visible;
+
 }
 
-/* =========================
-   COLUMNAS DEL DETALLE
-   ========================= */
+.fila-codigo {
 
-.detalle-codigo {
+  position: absolute;
+
+  left: 0;
+
   width: 23%;
+
   font-weight: bold;
+
   text-align: left;
+
+  overflow: hidden;
+
 }
 
-.detalle-producto {
-  width: 57%;
-  text-align: left;
-  word-break: break-word;
-}
+.fila-producto {
 
-.detalle-peso {
-  width: 20%;
+  position: absolute;
+
+  left: 23%;
+
+  width: 52%;
+
   text-align: left;
+
+  overflow: hidden;
+
   white-space: nowrap;
+
 }
 
-/* =========================
-   COLUMNAS DEL RESUMEN
-   ========================= */
+.fila-peso {
 
-.resumen-codigo {
+  position: absolute;
+
+  left: 73%;
+
+  width: 27%;
+
+  text-align: left;
+
+  white-space: nowrap;
+
+  overflow: visible;
+
+}
+
+.resumen-fila .fila-codigo {
+
+  left: 0;
+
   width: 21%;
-  font-weight: bold;
-  text-align: left;
+
 }
 
-.resumen-producto {
+.resumen-fila .fila-producto {
+
+  left: 21%;
+
   width: 59%;
-  text-align: left;
-  word-break: break-word;
+
 }
 
-.resumen-piezas {
+.fila-piezas {
+
+  position: absolute;
+
+  left: 80%;
+
   width: 8%;
+
   text-align: center;
+
+  white-space: nowrap;
+
 }
 
-.resumen-peso {
-  width: 12%;
-  text-align: left;
-  white-space: nowrap;
+.resumen-fila .fila-peso {
+
+  left: 86%;
+
+  width: 14%;
+
 }
 
 /* =========================

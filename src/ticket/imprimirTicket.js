@@ -315,7 +315,7 @@ table {
 
   border-collapse: collapse;
 
-  table-layout: fixed;
+  table-layout: auto;
 
 }
 

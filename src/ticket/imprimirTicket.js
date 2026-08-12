@@ -163,15 +163,15 @@ body {
     Helvetica,
     sans-serif;
 
-  font-size: 9px;
+  font-size: 8px;
 
   color: #000;
 
   padding:
-    4mm
     3mm
-    6mm
-    3mm;
+    1.5mm
+    5mm
+    1.5mm;
 
 }
 
@@ -348,7 +348,7 @@ td {
 
 .codigo {
 
-  width: 22%;
+  width: 20%;
 
   font-weight: bold;
 
@@ -360,7 +360,7 @@ td {
 
 .producto {
 
-  width: 55%;
+  width: 61%;
 
   text-align: left;
 
@@ -382,7 +382,7 @@ td {
 
 .peso {
 
-  width: 13%;
+  width: 19%;
 
   text-align: right;
 
@@ -433,7 +433,16 @@ td {
 
 <div class="logo">
 
-  <img src="${window.location.origin}/logo.png" alt="Papeloapan">
+  <img
+    id="logoOriginal"
+    src="${window.location.origin}/logo.png"
+    alt="Papeloapan"
+  >
+
+  <canvas
+    id="logoTermico"
+    style="display:none;"
+  ></canvas>
 
 </div>
 
@@ -627,10 +636,124 @@ ${resumenHTML}
 
   ventana.focus();
 
-  setTimeout(() => {
+  const prepararLogo = () => {
 
-    ventana.print();
+    const img = ventana.document.getElementById("logoOriginal");
+    const canvas = ventana.document.getElementById("logoTermico");
 
-  }, 300);
+    if (!img || !canvas) {
+      ventana.print();
+      return;
+    }
+
+    const dibujarLogo = () => {
+
+      try {
+
+        const ctx = canvas.getContext("2d");
+
+        const ancho = 1000;
+        const alto = Math.round(
+          img.naturalHeight * (ancho / img.naturalWidth)
+        );
+
+        canvas.width = ancho;
+        canvas.height = alto;
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          ancho,
+          alto
+        );
+
+        const datos = ctx.getImageData(
+          0,
+          0,
+          ancho,
+          alto
+        );
+
+        for (let i = 0; i < datos.data.length; i += 4) {
+
+          const r = datos.data[i];
+          const g = datos.data[i + 1];
+          const b = datos.data[i + 2];
+          const a = datos.data[i + 3];
+
+          const gris =
+            (r * 0.299) +
+            (g * 0.587) +
+            (b * 0.114);
+
+          if (a < 50) {
+
+            datos.data[i + 3] = 0;
+
+          } else if (gris < 210) {
+
+            datos.data[i] = 0;
+            datos.data[i + 1] = 0;
+            datos.data[i + 2] = 0;
+            datos.data[i + 3] = 255;
+
+          } else {
+
+            datos.data[i] = 255;
+            datos.data[i + 1] = 255;
+            datos.data[i + 2] = 255;
+            datos.data[i + 3] = 255;
+
+          }
+
+        }
+
+        ctx.putImageData(
+          datos,
+          0,
+          0
+        );
+
+        img.src = canvas.toDataURL("image/png");
+
+        img.style.display = "block";
+
+        setTimeout(() => {
+
+          ventana.print();
+
+        }, 200);
+
+      } catch (error) {
+
+        console.error(
+          "Error preparando logo térmico:",
+          error
+        );
+
+        ventana.print();
+
+      }
+
+    };
+
+    if (img.complete && img.naturalWidth > 0) {
+
+      dibujarLogo();
+
+    } else {
+
+      img.onload = dibujarLogo;
+
+      img.onerror = () => {
+        ventana.print();
+      };
+
+    }
+
+  };
+
+  prepararLogo();
 
 }

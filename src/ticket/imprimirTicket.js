@@ -56,7 +56,7 @@ export function imprimirTicket({
       <div class="fila-ticket">
         <span class="fila-codigo">${item.codigo}</span>
         <span class="fila-producto">${item.nombre}</span>
-        <span class="fila-peso">${Number(item.peso || 0).toFixed(2)}</span>
+        <span class="fila-peso">25.60</span>
       </div>
     `;
 
@@ -382,8 +382,13 @@ td {
 
   overflow: visible;
 
-}
+  font-family: Arial, Helvetica, sans-serif;
 
+  font-size: 10px;
+
+  letter-spacing: 0;
+
+}
 /* =========================
    RESUMEN
    ========================= */
@@ -419,6 +424,16 @@ td {
 .resumen-fila .fila-peso {
 
   width: auto;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 10px;
+
+  letter-spacing: 0;
+
+  white-space: nowrap;
+
+  overflow: visible;
 
 }
 

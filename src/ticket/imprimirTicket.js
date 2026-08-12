@@ -163,7 +163,7 @@ body {
     Helvetica,
     sans-serif;
 
-  font-size: 10px;
+  font-size: 9px;
 
   color: #000;
 
@@ -433,7 +433,7 @@ td {
 
 <div class="logo">
 
-  <img src="/logo.png" alt="Papeloapan">
+  <img src="${window.location.origin}/logo.png" alt="Papeloapan">
 
 </div>
 

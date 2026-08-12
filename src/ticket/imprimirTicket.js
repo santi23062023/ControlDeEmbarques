@@ -385,7 +385,7 @@ td {
 
   position: absolute;
 
-  left: 65%;
+  left: 68%;
 
   width: 32%;
 
@@ -429,9 +429,9 @@ td {
 
 .resumen-fila .fila-peso {
 
-  left: 86%;
+  left: 78%;
 
-  width: 14%;
+  width: 22%;
 
 }
 

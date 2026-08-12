@@ -276,8 +276,9 @@ body {
 
   display: flex;
 
-  justify-content: space-between;
+  justify-content: flex-start;
 
+  gap: 5px;
 }
 
 .total strong {
@@ -348,7 +349,7 @@ td {
 
 .codigo {
 
-  width: 20%;
+  width: 23%;
 
   font-weight: bold;
 
@@ -360,7 +361,7 @@ td {
 
 .producto {
 
-  width: 60%;
+  width: 57%;
 
   text-align: left;
 
@@ -382,7 +383,7 @@ td {
 
 .peso {
 
-  width: 20%;
+  width: 25%;
 
   text-align: right;
 
@@ -414,6 +415,23 @@ td {
 
   html,
   body {
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 9px;
+
+  color: #000;
+
+  padding:
+    3mm
+    1.5mm
+    5mm
+    1.5mm;
+
+}
 
     width: 80mm;
 

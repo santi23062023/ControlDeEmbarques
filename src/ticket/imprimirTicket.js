@@ -115,7 +115,7 @@ export function imprimirTicket({
 <style>
 
 @page {
-  size: 80mm auto;
+  size: 75mm auto;
   margin: 0;
 }
 
@@ -126,7 +126,7 @@ export function imprimirTicket({
 html,
 body {
 
-  width: 80mm;
+  width: 75mm;
 
   margin: 0;
   padding: 0;

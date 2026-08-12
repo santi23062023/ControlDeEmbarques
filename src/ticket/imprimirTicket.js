@@ -385,9 +385,9 @@ td {
 
   position: absolute;
 
-  left: 73%;
+  left: 65%;
 
-  width: 27%;
+  width: 32%;
 
   text-align: left;
 

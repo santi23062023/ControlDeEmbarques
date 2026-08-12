@@ -335,7 +335,7 @@ th {
 td {
 
   padding:
-    3px 1px;
+    2px 0;
 
   vertical-align: top;
 
@@ -348,7 +348,7 @@ td {
 
 .codigo {
 
-  width: 24%;
+  width: 22%;
 
   font-weight: bold;
 
@@ -360,7 +360,7 @@ td {
 
 .producto {
 
-  width: 48%;
+  width: 55%;
 
   text-align: left;
 
@@ -372,7 +372,7 @@ td {
 
 .piezas {
 
-  width: 13%;
+  width: 10%;
 
   text-align: center;
 
@@ -382,7 +382,7 @@ td {
 
 .peso {
 
-  width: 15%;
+  width: 13%;
 
   text-align: right;
 

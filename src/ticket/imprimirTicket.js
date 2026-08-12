@@ -392,6 +392,55 @@ td {
 }
 
 /* =========================
+   COLUMNAS DEL DETALLE
+   ========================= */
+
+.detalle-codigo {
+  width: 23%;
+  font-weight: bold;
+  text-align: left;
+}
+
+.detalle-producto {
+  width: 57%;
+  text-align: left;
+  word-break: break-word;
+}
+
+.detalle-peso {
+  width: 20%;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* =========================
+   COLUMNAS DEL RESUMEN
+   ========================= */
+
+.resumen-codigo {
+  width: 21%;
+  font-weight: bold;
+  text-align: left;
+}
+
+.resumen-producto {
+  width: 59%;
+  text-align: left;
+  word-break: break-word;
+}
+
+.resumen-piezas {
+  width: 8%;
+  text-align: center;
+}
+
+.resumen-peso {
+  width: 12%;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* =========================
    FIN
    ========================= */
 
@@ -562,15 +611,15 @@ td {
 
 <tr>
 
-<th class="codigo">
+<th class="detalle-codigo">
   Código
 </th>
 
-<th class="producto">
+<th class="detalle-producto">
   Producto
 </th>
 
-<th class="peso">
+<th class="detalle-peso">
   Kg
 </th>
 
@@ -604,19 +653,19 @@ ${detalleHTML}
 
 <tr>
 
-<th class="codigo">
+<th class="resumen-codigo">
   Código
 </th>
 
-<th class="producto">
+<th class="resumen-producto">
   Producto
 </th>
 
-<th class="piezas">
+<th class="resumen-piezas">
   Pzs
 </th>
 
-<th class="peso">
+<th class="resumen-peso">
   Kg
 </th>
 

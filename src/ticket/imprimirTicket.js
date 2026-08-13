@@ -462,24 +462,22 @@ td {
   html,
   body {
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
-  font-size: 9px;
-
-  color: #000;
-
-  padding:
-    3mm
-    0
-    5mm
-    0;
-
-}
-
     width: 80mm;
+
+    font-family:
+      Arial,
+      Helvetica,
+      sans-serif;
+
+    font-size: 9px;
+
+    color: #000;
+
+    padding:
+      3mm
+      0
+      5mm
+      0;
 
   }
 
